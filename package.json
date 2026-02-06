@@ -13,14 +13,22 @@
   },
   "dependencies": {
     "@nuxt/eslint": "1.13.0",
-    "eslint": "^9.0.0",
+    "@tailwindcss/vite": "^4.1.18",
+    "@vueuse/nuxt": "14.2.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-vue-next": "^0.563.0",
     "nuxt": "^4.3.0",
+    "shadcn-nuxt": "2.4.3",
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss": "^4.1.18",
     "vue": "^3.5.27",
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^7.2.0",
     "eslint": "^9.39.2",
-    "eslint-plugin-better-tailwindcss": "^4.1.1"
+    "eslint-plugin-better-tailwindcss": "^4.1.1",
+    "tw-animate-css": "^1.4.0"
   }
 }
