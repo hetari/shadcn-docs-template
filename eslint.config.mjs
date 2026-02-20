@@ -61,6 +61,7 @@ export default withNuxt(
               newlinesBetween: "ignore",
             },
           ],
+          // TODO: temporarily disabled - reason: filename-case conflicts with some Nuxt conventions
           // "unicorn/filename-case": [
           //   "error",
           //   {
@@ -71,10 +72,10 @@ export default withNuxt(
         },
         settings: {
           "better-tailwindcss": {
-            entryPoint: "./app/assets/css/tailwind.css",
+            entryPoint: "./app/assets/css/main.css",
             group: "never",
             preferSingleLine: true,
-            printWidth: 120,
+            printWidth: 180,
           },
         },
       },

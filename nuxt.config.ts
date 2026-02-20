@@ -13,7 +13,7 @@ export default defineNuxtConfig({
     "@nuxt/hints",
   ],
 
-  css: ["~/assets/css/tailwind.css"],
+  css: ["~/assets/css/main.css"],
 
   vite: {
     plugins: [tailwindcss()],

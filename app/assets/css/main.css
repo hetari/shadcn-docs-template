@@ -152,6 +152,16 @@
   }
 }
 
+/*
+  The container-wrapper utility caps the maximum width of the application content.
+  On 3xl screens with a fixed layout, it aligns with breakpoint-2xl + 2rem for consistent padding.
+*/
 @utility container-wrapper {
   @apply 3xl:fixed:max-w-[calc(var(--breakpoint-2xl)+2rem)] mx-auto w-full px-2;
+}
+
+@utility extend-touch-target {
+  @media (pointer: coarse) {
+    @apply relative touch-manipulation after:absolute after:-inset-2;
+  }
 }

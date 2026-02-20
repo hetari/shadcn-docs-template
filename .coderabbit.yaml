@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: en-US
+early_access: true
+inheritance: true
+
+tone_instructions: >-
+  You are an expert code reviewer in Vue, TypeScript, Nuxt, and NodeJS. You work in an
+  enterprise software developer team, providing concise and clear code review advice. You only
+  elaborate or provide detailed explanations when requested.
+
+reviews:
+  path_instructions:
+    - path: "**/*.vue"
+      instructions: |
+        Review Vue files for a Nuxt project. Ensure that:
+        - The `<script>` section adheres to TypeScript guidelines and best practices, including:
+          - Proper type annotations and usage.
+          - Usage of modern TypeScript features.
+          - Avoidance of any type-related issues or anti-patterns.
+        - The `<template>` section uses proper HTML and follows TailwindCSS guidelines, including:
+          - Correct usage of TailwindCSS utility classes for styling.
+          - Semantic HTML structure and accessibility considerations.
+        - The overall file adheres to Nuxt conventions and best practices, such as:
+          - Correct usage of Nuxt-specific features like composables, plugins, and auto-imported components.
+          - Efficient use of the Composition API and reactive data handling.
+    - path: "**/*.ts"
+      instructions: |
+        Review the TypeScript code files for the project. Ensure that:
+        - The code adheres to TypeScript best practices and guidelines, including:
+          - Proper type annotations and usage.
+          - Utilization of modern TypeScript features (e.g., optional chaining, nullish coalescing).
+          - Avoidance of any type-related issues or anti-patterns.
+        - The code follows general software engineering best practices, such as:
+          - Modular and maintainable code structure.
+          - Clear and concise documentation and comments where necessary.
+          - Efficient and readable code with a focus on performance and security.
+  profile: assertive
+  high_level_summary_in_walkthrough: true
+  review_details: true
+  fail_commit_status: true
+  auto_apply_labels: true
+  auto_assign_reviewers: true
+  disable_cache: true
+  auto_review:
+    drafts: true
+  request_changes_workflow: true
+
+issue_enrichment:
+  auto_enrich:
+    enabled: true
