@@ -45,7 +45,7 @@
   --color-surface: var(--surface);
   --color-surface-foreground: var(--surface-foreground);
 
-  --breakpoint-2xl: 1536px;
+  --breakpoint-2xl: 1400px;
   --breakpoint-3xl: 1600px;
   --breakpoint-4xl: 2000px;
 
@@ -158,6 +158,22 @@
 */
 @utility container-wrapper {
   @apply 3xl:fixed:max-w-[calc(var(--breakpoint-2xl)+2rem)] mx-auto w-full px-2;
+}
+
+/*
+  The container utility sets a maximum width for the content and centers it horizontally.
+  It also applies horizontal padding that adjusts for larger screens, ensuring the content remains visually balanced and readable across different screen sizes.
+*/
+@utility container {
+  @apply 3xl:max-w-screen-2xl mx-auto max-w-350 px-4 lg:px-8;
+}
+
+/*
+  The border-grid utility applies a semi-transparent border color to elements, with a different color in dark mode.
+  It uses the border color with 50% opacity for light mode and the full border color for dark mode, ensuring visibility and contrast across themes.
+*/
+@utility border-grid {
+  @apply border-border/50 dark:border-border;
 }
 
 @utility extend-touch-target {

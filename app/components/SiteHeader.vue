@@ -6,7 +6,7 @@ import { siteConfig } from "~/lib/siteConfig";
   <header class="sticky top-0 z-50 w-full bg-background">
     <div class="container-wrapper px-6 3xl:fixed:px-0">
       <div
-        class="flex h-(--header-height) items-center **:data-[slot=separator]:h-4! 3xl:fixed:container"
+        class="mx-auto flex h-(--header-height) items-center **:data-[slot=separator]:h-4!"
       >
         <Button
           as-child
