@@ -12,7 +12,7 @@
     "lint:fix": "eslint --fix"
   },
   "dependencies": {
-    "@nuxt/eslint": "1.13.0",
+    "@nuxtjs/color-mode": "4.0.0",
     "@tailwindcss/vite": "^4.1.18",
     "@vueuse/nuxt": "14.2.0",
     "class-variance-authority": "^0.7.1",
@@ -26,6 +26,9 @@
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
+    "@nuxt/a11y": "1.0.0-alpha.1",
+    "@nuxt/eslint": "1.13.0",
+    "@nuxt/hints": "1.0.0-alpha.6",
     "@antfu/eslint-config": "^7.2.0",
     "eslint": "^9.39.2",
     "eslint-plugin-better-tailwindcss": "^4.1.1",

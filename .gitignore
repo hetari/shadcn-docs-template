@@ -1,3 +1,6 @@
+.agents/
+.agent/
+
 # Nuxt dev/build outputs
 .output
 .data
