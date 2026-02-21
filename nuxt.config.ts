@@ -12,6 +12,7 @@ export default defineNuxtConfig({
     "@nuxt/a11y",
     "@nuxt/hints",
     "nuxt-og-image",
+    "@nuxt/content",
   ],
 
   ogImage: {

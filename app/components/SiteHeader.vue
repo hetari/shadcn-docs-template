@@ -1,11 +1,20 @@
 <script lang="ts" setup>
+import { getColors } from "~/lib/colors";
 import { siteConfig } from "~/lib/siteConfig";
+
+const { data } = await useNavigation();
+const docData = computed(() => data.value!.find(i => i.stem === "docs")!);
 </script>
 
 <template>
   <header class="sticky top-0 z-50 w-full bg-background">
     <div class="container-wrapper px-6 3xl:fixed:px-0">
-      <div class="mx-auto flex h-(--header-height) items-center **:data-[slot=separator]:h-4!">
+      <div class="flex h-(--header-height) items-center **:data-[slot=separator]:h-4! 3xl:fixed:container">
+        <MobileNav
+          :tree="data ?? []"
+          :items="siteConfig.navItems"
+          class="flex lg:hidden"
+        />
         <Button
           as-child
           variant="ghost"
@@ -17,18 +26,19 @@ import { siteConfig } from "~/lib/siteConfig";
             <span class="sr-only">{{ siteConfig.name }}</span>
           </NuxtLink>
         </Button>
-
         <MainNav :items="siteConfig.navItems" class="hidden lg:flex" />
         <div class="ml-auto flex items-center gap-2 md:flex-1 md:justify-end">
           <div class="hidden w-full flex-1 md:flex md:w-auto md:flex-none">
-            <CommandMenu />
+            <CommandMenu :tree="docData" :colors="getColors()" :nav-items="siteConfig.navItems" />
           </div>
-          <Separator class="ml-2 hidden lg:block" orientation="vertical" />
+          <Separator
+            orientation="vertical"
+            class="ml-2 hidden lg:block"
+          />
           <GitHubLink />
-          <Separator class="hidden 3xl:flex" orientation="vertical" />
-
-          <SiteConfig class="hidden xl:flex" />
-          <Separator class="hidden xl:flex" orientation="vertical" />
+          <Separator orientation="vertical" class="hidden 3xl:flex" />
+          <SiteConfig class="hidden 3xl:flex" />
+          <Separator orientation="vertical" />
           <ModeSwitcher />
         </div>
       </div>

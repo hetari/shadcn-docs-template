@@ -20,7 +20,12 @@ const { path } = toRefs(useRoute());
       variant="ghost"
     >
       <NuxtLink
-        :class="cn(path === item.href && 'text-primary')"
+        :class="
+          cn(
+            'transition-colors hover:text-primary',
+            path === item.href ? 'text-primary' : 'text-muted-foreground',
+          )
+        "
         :to="item.href"
       >
         {{ item.label }}

@@ -185,3 +185,23 @@
     @apply relative touch-manipulation after:absolute after:-inset-2;
   }
 }
+
+/*
+  The no-scrollbar utility hides the scrollbar for an element across different browsers.
+  It sets the overflow style to none for Internet Explorer and Edge, and hides the scrollbar for WebKit-based browsers (e.g., Chrome, Safari) while also setting the scrollbar width to none for Firefox, ensuring a consistent scrollbar-free experience across all major browsers.
+*/
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/*
+  The border-ghost utility creates a ghost border effect by applying a border color that blends with the background.
+  It uses the border color for the after pseudo-element, which is positioned absolutely to cover the entire element, and applies a mix-blend mode to darken the border in light mode and lighten it in dark mode, creating a subtle and visually appealing border effect that adapts to the theme.
+*/
+@utility border-ghost {
+  @apply after:border-border relative after:absolute after:inset-0 after:border after:mix-blend-darken dark:after:mix-blend-lighten;
+}

@@ -2,9 +2,9 @@
 const colorMode = useColorMode();
 
 function toggleTheme() {
-  const preferences = ["system", "light", "dark"];
+  const preferences = ["light", "dark"];
   const current = colorMode.preference as any;
-  const index = preferences.indexOf(current || "system");
+  const index = preferences.indexOf(current || "dark");
   const nextIndex = (index + 1) % preferences.length;
   colorMode.preference = preferences[nextIndex] as any;
 }
