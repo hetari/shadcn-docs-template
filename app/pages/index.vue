@@ -17,6 +17,11 @@ useSeoMeta({
 
 <template>
   <div class="flex flex-1 flex-col items-center justify-center">
-    <h1>Hi</h1>
+    <SitePageHeader>
+      <SitePageHeaderHeading class="max-w-4xl">
+        {{ title }}
+      </SitePageHeaderHeading>
+      <SitePageHeaderDescription>{{ description }}</SitePageHeaderDescription>
+    </SitePageHeader>
   </div>
 </template>

@@ -1,5 +1,15 @@
 <script lang="ts" setup>
-// const open = ref(false);
+import { useIsMac } from "~/composables/useIsMac";
+
+const isMac = useIsMac();
+onKeyStroke("k", (event) => {
+  if (isMac.value ? event.metaKey : event.ctrlKey) {
+    event.preventDefault();
+    // Open command menu logic here
+    // eslint-disable-next-line no-alert
+    alert("todo: Command menu opened!");
+  }
+});
 </script>
 
 <template>
@@ -11,7 +21,7 @@
     <span class="inline-flex lg:hidden">Search...</span>
     <div class="absolute top-1.5 right-1.5 hidden gap-1 sm:flex">
       <KbdGroup>
-        <Kbd class="border">⌘</Kbd>
+        <Kbd class="border">{{ isMac ? '⌘' : 'Ctrl' }}</Kbd>
         <Kbd class="border">K</Kbd>
       </KbdGroup>
     </div>

@@ -176,6 +176,10 @@
   @apply border-border/50 dark:border-border;
 }
 
+/*
+ The extend-touch-target utility enhances the touch target area for interactive elements on devices with coarse pointers (e.g., touchscreens).
+ It applies relative positioning and touch manipulation to the element, and uses an after pseudo-element to create an extended hit area of 2 units around the element, improving usability on touch devices.
+*/
 @utility extend-touch-target {
   @media (pointer: coarse) {
     @apply relative touch-manipulation after:absolute after:-inset-2;
