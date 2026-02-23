@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { ContentCollectionItem } from "@nuxt/content";
+import { ArrowLeft, ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-vue-next";
 
 type DocPage = ContentCollectionItem & {
   links?: {
@@ -54,6 +55,7 @@ useSeoMeta({
                 >
                   {{ page.title }}
                 </h1>
+
                 <div
                   class="
                     fixed inset-x-0 bottom-0 isolate z-50 flex items-center gap-2 border-t border-border/50 bg-background/80 px-6 py-4 backdrop-blur-sm sm:static sm:z-0
@@ -70,7 +72,7 @@ useSeoMeta({
                     as-child
                   >
                     <NuxtLink :to="neighbours[0].path">
-                      <IconArrowLeft />
+                      <ArrowLeft />
                       <span class="sr-only">Previous</span>
                     </NuxtLink>
                   </Button>
@@ -83,7 +85,7 @@ useSeoMeta({
                   >
                     <NuxtLink :to="neighbours[1].path">
                       <span class="sr-only">Next</span>
-                      <IconArrowRight />
+                      <ArrowRight />
                     </NuxtLink>
                   </Button>
                 </div>
@@ -98,12 +100,12 @@ useSeoMeta({
             <div v-if="page.links" class="flex items-center space-x-2 pt-4">
               <Badge v-if="page.links.doc" as-child variant="secondary">
                 <NuxtLink :to="page.links.doc" target="_blank" rel="noreferrer">
-                  Docs <IconArrowUpRight />
+                  Docs <ArrowUpRight />
                 </NuxtLink>
               </Badge>
               <Badge v-if="page.links.api" as-child variant="secondary">
                 <NuxtLink :to="page.links.api" target="_blank" rel="noreferrer">
-                  API Reference <IconArrowUpRight />
+                  API Reference <ArrowUpRight />
                 </NuxtLink>
               </Badge>
             </div>
@@ -125,7 +127,7 @@ useSeoMeta({
             class="shadow-none"
           >
             <NuxtLink :to="neighbours[0].path">
-              <IconArrowLeft /> {{ neighbours[0].title }}
+              <ChevronLeft /> {{ neighbours[0].title }}
             </NuxtLink>
           </Button>
           <Button
@@ -136,7 +138,7 @@ useSeoMeta({
             as-child
           >
             <NuxtLink :to="neighbours[1].path">
-              {{ neighbours[1].title }} <IconArrowRight />
+              {{ neighbours[1].title }} <ChevronRight />
             </NuxtLink>
           </Button>
         </div>
