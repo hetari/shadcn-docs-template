@@ -2,6 +2,9 @@
 {
   "format_on_save": "on",
   "languages": {
+    "Markdown": {
+      "format_on_save": "off"
+    },
     "TypeScript": {
       "code_actions_on_format": {
         "source.fixAll.eslint": true

@@ -16,6 +16,9 @@ export default withNuxt(
       },
     },
     [
+      {
+        ignores: ["**/*.md"],
+      },
       tailwindcss.configs.recommended,
       {
         rules: {

@@ -1,9 +1,21 @@
 ---
 title: About
 description: Powered by amazing open source projects.
-navigation:
-  icon: lucide:activity
+featured: true
+component: true
 ---
 
-Since the shadcn-vue official website is now based on the new Nuxt v4 architecture, this template only contains the core
-functionality required for document preview.
+::component-preview
+---
+name: Button
+description: A button
+---
+::
+
+Hi, I'm Ebraheem Alhetari (pronounced like "Eb-ra-heem Al-he-ta-ri"). I built this documentation template as a remix of the original [shadcn-vue](https://www.shadcn-vue.com) codebase — reorganizing and simplifying it so that anyone can create a beautiful docs site just like it.
+
+This template is 100% open source, easy to customize, and will be kept up to date with the latest changes from upstream. Whether you're documenting your own library, project, or product, you can use this as a solid foundation.
+
+Powered by [Nuxt Content](https://content.nuxt.com), [Tailwind CSS](https://tailwindcss.com), and the amazing Vue ecosystem, it's designed to be both developer‑friendly and a joy to read.
+
+Feel free to explore, contribute, and build something great!

@@ -43,6 +43,7 @@
     "@nuxt/a11y": "1.0.0-alpha.1",
     "@nuxt/eslint": "1.13.0",
     "@nuxt/hints": "1.0.0-alpha.6",
+    "@tailwindcss/typography": "^0.5.19",
     "eslint": "^9.39.2",
     "eslint-plugin-better-tailwindcss": "^4.1.1",
     "husky": "^9.1.7",

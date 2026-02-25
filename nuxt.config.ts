@@ -49,19 +49,16 @@ export default defineNuxtConfig({
     componentDir: "@/components/ui",
   },
 
-  content: {
-    build: {
-      markdown: {
-        highlight: false,
+  components: {
+    dirs: [
+      {
+        path: "~/components/ui",
+        global: true,
+        pathPrefix: false,
+        preload: true,
+        prefetch: true,
       },
-    },
-    database: {
-      type: "d1",
-      bindingName: "DB",
-    },
-    // required to prevent error related to better-sqlite3 during build and deploy
-    experimental: {
-      sqliteConnector: "native",
-    },
+      "~/components",
+    ],
   },
 });
