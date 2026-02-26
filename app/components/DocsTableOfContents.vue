@@ -63,7 +63,8 @@ onMounted(() => {
         size="sm"
         variant="outline"
       >
-        <Icon name="tabler:menu-deep" />
+        <!-- <Icon name="tabler:menu-deep" /> -->
+
         On This Page
       </Button>
     </DropdownMenuTrigger>
@@ -92,7 +93,7 @@ onMounted(() => {
       v-if="tocLinks.length"
       class="sticky top-0 flex h-6 items-center gap-2 bg-background text-xs text-muted-foreground"
     >
-      <Icon name="tabler:menu-deep" />
+      <!-- <Icon name="tabler:menu-deep" /> -->
       On This Page
     </p>
     <a

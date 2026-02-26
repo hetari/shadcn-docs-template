@@ -68,6 +68,12 @@ export default defineNuxtConfig({
       light: "github-light-default",
       dark: "github-dark",
     },
-    langs: ["ts", "js", "vue", "html", "bash"],
+    bundledLangs: [
+      "typescript",
+      "javascript",
+      "vue",
+      "html",
+      "bash",
+    ],
   },
 });
