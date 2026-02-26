@@ -8,7 +8,7 @@ import { showMcpDocs } from "~/lib/flag";
 const props = defineProps<{
   class?: HTMLAttributes["class"];
   tree: ContentNavigationItem[];
-  items: { href: string; label: string }[];
+  items: { name: string; label: string }[];
 }>();
 const router = useRouter();
 const open = ref(false);
@@ -88,8 +88,8 @@ function handleNavigate(path: string) {
               v-for="(item, index) in items"
               :key="index"
               class="text-2xl font-medium"
-              :to="item.href"
-              @click="handleNavigate(item.href)"
+              :to="item.name"
+              @click="handleNavigate(item.name)"
             >
               {{ item.label }}
             </NuxtLink>

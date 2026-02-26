@@ -6,11 +6,11 @@ export type NavItem = {
 /** Top-level section pills shown in the sidebar and mobile menu. */
 export const NAV_SECTIONS: NavItem[] = [
   { name: "Get Started", href: "/docs/introduction" },
-  { name: "Components", href: "/docs/components" },
-  { name: "Registry", href: "/docs/registry" },
-  { name: "MCP Server", href: "/docs/mcp" },
-  { name: "Forms", href: "/docs/forms" },
-  { name: "Changelog", href: "/docs/changelog" },
+  // { name: "Components", href: "/docs/components" },
+  // { name: "Registry", href: "/docs/registry" },
+  // { name: "MCP Server", href: "/docs/mcp" },
+  // { name: "Forms", href: "/docs/forms" },
+  // { name: "Changelog", href: "/docs/changelog" },
 ];
 
 /** Sidebar group titles (lowercased) that should never be rendered. */
@@ -23,4 +23,19 @@ export const SIDEBAR_EXCLUDED_SECTIONS: string[] = [
 export const SIDEBAR_EXCLUDED_PAGES: string[] = [
   "/docs/introduction",
   "/docs/changelog",
+];
+
+export const MAIN_NAVIGATION: NavItem[] = [
+  {
+    href: "/docs/getting-started/introduction",
+    name: "Docs",
+  },
+  // {
+  //   href: "/docs/prose-demo",
+  //   label: "Demo",
+  // },
+  // {
+  //   href: "/docs/about",
+  //   label: "About",
+  // },
 ];

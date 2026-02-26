@@ -3,7 +3,7 @@ import type { HTMLAttributes } from "vue";
 import { cn } from "@/lib/utils";
 
 const props = defineProps<{
-  items: { href: string; label: string }[];
+  items: { href: string; name: string }[];
   class?: HTMLAttributes["class"];
 }>();
 
@@ -28,7 +28,7 @@ const { path } = toRefs(useRoute());
         "
         :to="item.href"
       >
-        {{ item.label }}
+        {{ item.name }}
       </NuxtLink>
     </Button>
   </nav>

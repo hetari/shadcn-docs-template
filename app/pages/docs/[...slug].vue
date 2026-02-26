@@ -1,8 +1,15 @@
 <script lang="ts" setup>
 import type { ContentCollectionItem } from "@nuxt/content";
-import { ArrowLeft, ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-vue-next";
+import {
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-vue-next";
 
 type DocPage = ContentCollectionItem & {
+  rawbody?: string;
   links?: {
     doc?: string;
     api?: string;
@@ -113,7 +120,7 @@ useSeoMeta({
 
           <ContentRenderer
             :value="page"
-            class="w-full flex-1 *:data-[slot=alert]:first:mt-0"
+            class="prose w-full flex-1 *:data-[slot=alert]:first:mt-0 dark:prose-invert"
           />
         </div>
         <div

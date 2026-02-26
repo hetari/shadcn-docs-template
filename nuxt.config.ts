@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     "@nuxt/hints",
     "nuxt-og-image",
     "@nuxt/content",
+    "nuxt-shiki",
   ],
 
   ogImage: {
@@ -60,5 +61,13 @@ export default defineNuxtConfig({
       },
       "~/components",
     ],
+  },
+
+  shiki: {
+    defaultTheme: {
+      light: "github-light-default",
+      dark: "github-dark",
+    },
+    langs: ["ts", "js", "vue", "html", "bash"],
   },
 });

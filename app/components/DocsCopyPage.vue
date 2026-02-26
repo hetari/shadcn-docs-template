@@ -139,7 +139,7 @@ const { copy, copied } = useClipboard();
         variant="secondary"
         size="sm"
         class="h-8 shadow-none md:h-7 md:text-[0.8rem]"
-        @click="copy(page.rawbody ?? '')"
+        @click="copy(page.rawbody || '')"
       >
         <Check v-if="copied" /> <Copy v-else />
         Copy Page

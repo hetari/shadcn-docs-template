@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { getColors } from "~/lib/colors";
+import { MAIN_NAVIGATION } from "~/lib/navigation";
 import { siteConfig } from "~/lib/siteConfig";
 
 const { data } = await useNavigation();
@@ -12,7 +13,7 @@ const docData = computed(() => data.value!.find(i => i.stem === "docs")!);
       <div class="flex h-(--header-height) items-center **:data-[slot=separator]:h-4! 3xl:fixed:container">
         <MobileNav
           :tree="data ?? []"
-          :items="siteConfig.navItems"
+          :items="MAIN_NAVIGATION"
           class="flex lg:hidden"
         />
         <Button
@@ -26,7 +27,7 @@ const docData = computed(() => data.value!.find(i => i.stem === "docs")!);
             <span class="sr-only">{{ siteConfig.name }}</span>
           </NuxtLink>
         </Button>
-        <MainNav :items="siteConfig.navItems" class="hidden lg:flex" />
+        <MainNav :items="MAIN_NAVIGATION" class="hidden lg:flex" />
         <div class="ml-auto flex items-center gap-2 md:flex-1 md:justify-end">
           <div class="hidden w-full flex-1 md:flex md:w-auto md:flex-none">
             <CommandMenu :tree="docData" :colors="getColors()" :nav-items="siteConfig.navItems" />

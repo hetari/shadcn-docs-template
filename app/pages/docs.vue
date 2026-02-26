@@ -12,7 +12,7 @@ const docData = computed(() => data.value!.find(i => i.stem === "docs")!);
       "
     >
       <DocsSidebar :tree="docData" />
-      <div class="h-full w-full">
+      <div class="size-full">
         <NuxtPage />
       </div>
     </SidebarProvider>
