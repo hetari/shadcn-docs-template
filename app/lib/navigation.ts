@@ -30,12 +30,4 @@ export const MAIN_NAVIGATION: NavItem[] = [
     href: "/docs/getting-started/introduction",
     name: "Docs",
   },
-  // {
-  //   href: "/docs/prose-demo",
-  //   label: "Demo",
-  // },
-  {
-    href: "/docs/about",
-    name: "About",
-  },
 ];

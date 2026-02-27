@@ -14,6 +14,9 @@ type DocPage = ContentCollectionItem & {
     doc?: string;
     api?: string;
   };
+  navigation?: {
+    icon?: string;
+  };
 };
 const route = useRoute();
 
@@ -58,8 +61,13 @@ useSeoMeta({
             <div class="flex flex-col gap-2">
               <div class="flex items-start justify-between">
                 <h1
-                  class="scroll-m-20 text-4xl font-semibold tracking-tight sm:text-3xl xl:text-4xl"
+                  class="flex scroll-m-20 items-center gap-3 text-4xl font-semibold tracking-tight sm:text-3xl xl:text-4xl"
                 >
+                  <LucideIcon
+                    v-if="page.navigation?.icon"
+                    :name="page.navigation.icon"
+                    class="size-8 shrink-0 text-muted-foreground sm:size-7 xl:size-8"
+                  />
                   {{ page.title }}
                 </h1>
 

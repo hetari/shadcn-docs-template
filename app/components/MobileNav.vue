@@ -126,6 +126,11 @@ function handleNavigate(path: string) {
                   :to="item.path"
                   @click="handleNavigate(item.path)"
                 >
+                  <LucideIcon
+                    v-if="item.navigation?.icon"
+                    :name="item.navigation.icon"
+                    class="size-6 shrink-0"
+                  />
                   {{ item.title }}
                   <span
                     v-if="item.new"

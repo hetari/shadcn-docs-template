@@ -95,6 +95,11 @@ function isActive(href: string) {
                     <span
                       class="absolute inset-0 flex w-(--sidebar-width) bg-transparent"
                     />
+                    <LucideIcon
+                      v-if="childItem.navigation?.icon"
+                      :name="childItem.navigation.icon"
+                      class="mr-2 size-4 shrink-0"
+                    />
                     {{ childItem.title }}
                     <span
                       v-if="childItem.new"

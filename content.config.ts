@@ -9,12 +9,19 @@ export default defineContentConfig({
         exclude: ["**/.*"],
       },
       schema: z.object({
-        rawbody: z.string(), // reference: https://content.nuxt.com/docs/advanced/raw-content
-        links: z.object({
-          doc: z.string(),
-          api: z.string(),
-        }),
-        new: z.boolean(),
+        rawbody: z.string().optional(),
+        links: z
+          .object({
+            doc: z.string().optional(),
+            api: z.string().optional(),
+          })
+          .optional(),
+        new: z.boolean().optional(),
+        navigation: z
+          .object({
+            icon: z.string().optional(),
+          })
+          .optional(),
       }),
     }),
   },
