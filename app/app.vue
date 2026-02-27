@@ -6,6 +6,7 @@ useHead({
     lang: "en",
   },
 });
+const colorMode = useColorMode();
 </script>
 
 <template>
@@ -17,5 +18,9 @@ useHead({
         </NuxtLayout>
       </TooltipProvider>
     </ConfigProvider>
+
+    <ClientOnly>
+      <Toaster class="pointer-events-auto" :theme="colorMode.preference as any || 'system'" position="top-center" />
+    </ClientOnly>
   </SiteBody>
 </template>
