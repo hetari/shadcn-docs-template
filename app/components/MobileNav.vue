@@ -89,7 +89,7 @@ function handleNavigate(path: string) {
               :key="index"
               class="text-2xl font-medium"
               :to="item.href"
-              @click="handleNavigate(item.name)"
+              @click="handleNavigate(item.href)"
             >
               {{ item.name }}
             </NuxtLink>

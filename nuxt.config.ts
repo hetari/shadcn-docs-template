@@ -73,14 +73,14 @@ export default defineNuxtConfig({
     },
     bundledLangs: [
       "ts",
-      // "tsx",
+      "tsx",
       "js",
       "vue",
       "html",
       "json",
       "bash",
-      // "astro",
-      // "toml",
+      "astro",
+      "toml",
     ],
   },
 

@@ -217,19 +217,19 @@
 @layer components {
   .steps {
     &:first-child {
-      @apply !mt-0;
+      @apply mt-0!;
     }
 
     > h3:first-child {
-      @apply !mt-6;
+      @apply mt-6!;
     }
 
     > h3 {
-      @apply !mt-12;
+      @apply mt-12!;
     }
 
     > h3 + p {
-      @apply !mt-2;
+      @apply mt-2!;
     }
   }
 
@@ -343,7 +343,7 @@
 
   &:before {
     @apply bg-background border-border ring-background absolute inline-flex size-7 items-center justify-center rounded-full border text-center -indent-px font-mono text-sm font-medium ring-8;
-    @apply ml-[-46px];
+    @apply -ml-11.5;
     content: counter(step);
   }
 }
