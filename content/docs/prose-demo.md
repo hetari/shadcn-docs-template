@@ -1,8 +1,6 @@
 ---
 title: Prose Demo
 description: Prose components are replacements for HTML typography tags. Prose components provide a simple way to customize content UI.
-navigation:
-  icon: iconamoon:component
 ---
 
 # Heading

@@ -9,7 +9,9 @@ const docData = computed(() => data.value!.find(i => i.stem === "docs")!);
 <template>
   <header class="sticky top-0 z-50 w-full bg-background">
     <div class="container-wrapper px-6 3xl:fixed:px-0">
-      <div class="flex h-(--header-height) items-center **:data-[slot=separator]:h-4! 3xl:fixed:container">
+      <div
+        class="flex h-(--header-height) items-center **:data-[slot=separator]:h-4! 3xl:fixed:container"
+      >
         <MobileNav
           :tree="data ?? []"
           :items="MAIN_NAVIGATION"
@@ -29,12 +31,9 @@ const docData = computed(() => data.value!.find(i => i.stem === "docs")!);
         <MainNav :items="MAIN_NAVIGATION" class="hidden lg:flex" />
         <div class="ml-auto flex items-center gap-2 md:flex-1 md:justify-end">
           <div class="hidden w-full flex-1 md:flex md:w-auto md:flex-none">
-            <CommandMenu :tree="docData" :nav-items="siteConfig.navItems" />
+            <CommandMenu :tree="docData" :nav-items="MAIN_NAVIGATION" />
           </div>
-          <Separator
-            orientation="vertical"
-            class="ml-2 hidden lg:block"
-          />
+          <Separator orientation="vertical" class="ml-2 hidden lg:block" />
           <GitHubLink />
           <Separator orientation="vertical" class="hidden 3xl:flex" />
           <SiteConfig class="hidden 3xl:flex" />

@@ -82,6 +82,8 @@ export default defineNuxtConfig({
       "astro",
       "toml",
       "yaml",
+      "md",
+      "markdown",
     ],
   },
 

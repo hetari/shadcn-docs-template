@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<{
       <div
         :data-align="align"
         :class="cn(
-          'flex w-full justify-center data-[align=center]:items-center data-[align=end]:items-end data-[align=start]:items-start',
+          'flex w-full items-center justify-center data-[align=center]:items-center data-[align=end]:items-end data-[align=start]:items-start',
           chromeLessOnMobile ? 'sm:p-10' : 'h-112.5 p-10',
         )"
       >

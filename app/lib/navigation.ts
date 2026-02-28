@@ -6,16 +6,10 @@ export type NavItem = {
 /** Top-level section pills shown in the sidebar and mobile menu. */
 export const NAV_SECTIONS: NavItem[] = [
   { name: "Get Started", href: "/docs/getting-started/introduction" },
-  // { name: "Components", href: "/docs/components" },
-  // { name: "Registry", href: "/docs/registry" },
-  // { name: "MCP Server", href: "/docs/mcp" },
-  // { name: "Forms", href: "/docs/forms" },
-  // { name: "Changelog", href: "/docs/changelog" },
 ];
 
 /** Sidebar group titles (lowercased) that should never be rendered. */
 export const SIDEBAR_EXCLUDED_SECTIONS: string[] = [
-  // "installation",
 ];
 
 /** Individual page paths that should be hidden from the sidebar page list. */

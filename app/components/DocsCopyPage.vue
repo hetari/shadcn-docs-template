@@ -135,7 +135,7 @@ const { copy, copied } = useClipboard();
         variant="secondary"
         size="sm"
         class="h-8 shadow-none md:h-7 md:text-[0.8rem]"
-        @click="copy(page.rawbody)"
+        @click="copy(page.rawbody || '')"
       >
         <Check v-if="copied" /> <Copy v-else />
         Copy Page
@@ -148,6 +148,7 @@ const { copy, copied } = useClipboard();
             class="peer -ml-0.5 size-8 shadow-none md:size-7 md:text-[0.8rem]"
           >
             <ChevronDown class="rotate-180 sm:rotate-0" />
+            <span class="sr-only">menu button</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" class="shadow-none">

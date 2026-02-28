@@ -11,7 +11,7 @@ type Props = {
     stem?: string;
   };
   blocks?: { name: string; description: string; categories: string[] }[];
-  navItems?: { href: string; label: string }[];
+  navItems?: { href: string; name: string }[];
 };
 
 withDefaults(defineProps<Props>(), {
@@ -204,7 +204,7 @@ onMounted(() => {
             <CommandItem
               v-for="item in navItems"
               :key="item.href"
-              :value="`Navigation ${item.label}`"
+              :value="`Navigation ${item.name}`"
               @select="() => runCommand(() => router.push(item.href))"
               @highlight="
                 () => {
@@ -214,7 +214,7 @@ onMounted(() => {
               "
             >
               <ChevronRight />
-              {{ item.label }}
+              {{ item.name }}
             </CommandItem>
           </CommandGroup>
 

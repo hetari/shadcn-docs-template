@@ -1,8 +1,3 @@
-export type NavItem = {
-  href: string;
-  label: string;
-};
-
 export type Links = {
   github: string;
   githubAPI: string;
@@ -15,7 +10,6 @@ export type SiteConfig = {
   ogImage: string;
   description: string;
   links: Links;
-  navItems: NavItem[];
 };
 
 export const siteConfig: SiteConfig = {
@@ -30,11 +24,4 @@ export const siteConfig: SiteConfig = {
     githubAPI: "https://api.github.com/repos/hetari/shadcn-docs-template",
     ungh: "https://ungh.cc/repos/hetari/shadcn-docs-template",
   },
-  navItems: [
-    {
-      href: "/",
-      label: "Docs",
-    },
-
-  ],
 };
