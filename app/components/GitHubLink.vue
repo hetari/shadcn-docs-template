@@ -6,8 +6,7 @@ import Skeleton from "./ui/skeleton/Skeleton.vue";
 const { data, pending, error } = useLazyFetch<{
   stargazers_count: number;
 }>(siteConfig.links.githubAPI, {
-  cache: "no-cache",
-  key: "github-stars",
+  server: false,
 });
 
 const stars = computed<string | null>(() => {
