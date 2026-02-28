@@ -20,50 +20,51 @@ export default defineCachedEventHandler(
     try {
       // Search through all markdown files in the content collection
       const results = (await queryCollection(event, "content")
-        .where({
-          _path: {
-            $contains: "/docs/",
-          },
-        })
-        .find()) as ContentCollectionItem[];
+        .where("path", "LIKE", "/docs/%")
+        .all()) as ContentCollectionItem[];
 
       const queryLower = query.toLowerCase().trim();
       const matched: SearchResult[] = [];
 
-      for (const item of results) {
+      for (const item of results as any[]) {
         const title = item.title?.toLowerCase() || "";
         const description = item.description?.toLowerCase() || "";
-        const body = item.body?.toLowerCase() || "";
-        const path = item._path?.toLowerCase() || "";
+        const bodyContent = item.rawbody?.toLowerCase() || "";
+        const path = item.path?.toLowerCase() || "";
 
-        // Check if query matches title, description, body, or path
+        // Check if query matches title, description, bodyContent, or path
         if (
           title.includes(queryLower)
           || description.includes(queryLower)
-          || body.includes(queryLower)
+          || bodyContent.includes(queryLower)
           || path.includes(queryLower)
         ) {
-          // Extract excerpt from body if available
+          // Extract excerpt from rawbody if available
           let excerpt: string | undefined;
-          if (item.body) {
-            const bodyLower = item.body.toLowerCase();
+          if (item.rawbody) {
+            const bodyLower = item.rawbody.toLowerCase();
             const index = bodyLower.indexOf(queryLower);
             if (index !== -1) {
               const start = Math.max(0, index - 50);
-              const end = Math.min(item.body.length, index + query.length + 50);
-              excerpt = item.body.slice(start, end);
-              if (start > 0)
+              const end = Math.min(
+                item.rawbody.length,
+                index + query.length + 50,
+              );
+              excerpt = item.rawbody.slice(start, end);
+              if (start > 0) {
                 excerpt = `...${excerpt}`;
-              if (end < item.body.length)
+              }
+              if (end < item.rawbody.length) {
                 excerpt = `${excerpt}...`;
+              }
             }
           }
 
           matched.push({
             title: item.title || "",
             description: item.description,
-            path: item._path || "",
-            body: item.body,
+            path: item.path || "",
+            body: item.rawbody,
             excerpt,
           });
         }
@@ -73,17 +74,21 @@ export default defineCachedEventHandler(
       matched.sort((a, b) => {
         const aTitleMatch = a.title.toLowerCase().includes(queryLower);
         const bTitleMatch = b.title.toLowerCase().includes(queryLower);
-        if (aTitleMatch && !bTitleMatch)
+        if (aTitleMatch && !bTitleMatch) {
           return -1;
-        if (!aTitleMatch && bTitleMatch)
+        }
+        if (!aTitleMatch && bTitleMatch) {
           return 1;
+        }
 
         const aDescMatch = a.description?.toLowerCase().includes(queryLower);
         const bDescMatch = b.description?.toLowerCase().includes(queryLower);
-        if (aDescMatch && !bDescMatch)
+        if (aDescMatch && !bDescMatch) {
           return -1;
-        if (!aDescMatch && bDescMatch)
+        }
+        if (!aDescMatch && bDescMatch) {
           return 1;
+        }
 
         return 0;
       });

@@ -1,4 +1,4 @@
-import { refDebounced } from "@vueuse/core";
+import { refDebounced, useMemoize } from "@vueuse/core";
 
 export type SearchResult = {
   title: string;
@@ -14,6 +14,21 @@ export function useSearch() {
   const isSearching = ref(false);
   const searchResults = ref<SearchResult[]>([]);
 
+  // Memoized search request
+  const memoizedSearch = useMemoize(
+    async (query: string): Promise<SearchResult[]> => {
+      if (!query || query.trim().length < 2) {
+        return [];
+      }
+
+      const results = await $fetch<SearchResult[]>("/api/search", {
+        query: { q: query },
+      });
+
+      return results || [];
+    },
+  );
+
   async function performSearch(query: string): Promise<SearchResult[]> {
     if (!query || query.trim().length < 2) {
       return [];
@@ -21,12 +36,9 @@ export function useSearch() {
 
     try {
       isSearching.value = true;
-
-      const results = await $fetch<SearchResult[]>("/api/search", {
-        query: { q: query },
-      });
-
-      return results || [];
+      // This will use cache for the same query string
+      const results = await memoizedSearch(query);
+      return results;
     }
     catch (error) {
       console.error("Search error:", error);
@@ -53,5 +65,9 @@ export function useSearch() {
     isSearching,
     searchResults,
     performSearch,
+    // expose cache controls if you want them:
+    reloadSearch: memoizedSearch.load,
+    deleteSearchCache: memoizedSearch.delete,
+    clearSearchCache: memoizedSearch.clear,
   };
 }
