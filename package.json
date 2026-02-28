@@ -57,5 +57,6 @@
   },
   "lint-staged": {
     "*": "bun lint"
-  }
+  },
+  "node": 24
 }
