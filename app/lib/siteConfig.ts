@@ -1,7 +1,6 @@
 export type Links = {
   github: string;
   githubAPI: string;
-  ungh: string;
 };
 
 export type SiteConfig = {
@@ -24,6 +23,5 @@ export const siteConfig: SiteConfig = {
   links: {
     github: repoUrl,
     githubAPI: "https://api.github.com/repos/hetari/shadcn-docs-template",
-    ungh: "https://ungh.cc/repos/hetari/shadcn-docs-template",
   },
 };

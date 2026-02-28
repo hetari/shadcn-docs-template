@@ -4,16 +4,14 @@ import { siteConfig } from "~/lib/siteConfig";
 import Skeleton from "./ui/skeleton/Skeleton.vue";
 
 const { data, pending, error } = useLazyFetch<{
-  repo: {
-    stars: number;
-  };
-}>(siteConfig.links.ungh, {
+  stargazers_count: number;
+}>(siteConfig.links.githubAPI, {
   cache: "no-cache",
   key: "github-stars",
 });
 
 const stars = computed<string | null>(() => {
-  const count = data.value?.repo?.stars;
+  const count = data.value?.stargazers_count;
   if (count !== 0 && !count) {
     return null;
   }
