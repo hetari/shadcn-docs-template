@@ -4,6 +4,11 @@
 
 A production-ready documentation template built with **Nuxt 4.3.1** and **shadcn-vue**. Engineered for speed, clarity, and developer sanity.
 
+<img src="./white.png" alt="shadcn-docs-template" width="100%" />
+<br />
+<img src="./black.png" alt="shadcn-docs-template" width="100%" />
+
+
 ## 📚 Documentation
 For more information, please visit the [Documentation](https://shadcn-docs-template-aotvvb.cranl.net).
 
@@ -49,4 +54,3 @@ bun dev
 ```
 
 The site will be available at `http://localhost:3000`.
-
