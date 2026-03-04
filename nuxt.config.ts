@@ -103,7 +103,7 @@ export default defineNuxtConfig({
     },
     // required to prevent error related to better-sqlite3 during build and deploy
     experimental: {
-      sqliteConnector: "native",
+      sqliteConnector: "better-sqlite3",
     },
   },
 

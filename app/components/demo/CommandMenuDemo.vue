@@ -1,32 +1,31 @@
 <script setup lang="ts">
 const tree = {
+  title: "Docs",
+  path: "/docs",
   children: [
     {
       title: "Getting Started",
-      type: "group",
+      path: "/docs/getting-started",
+      type: "group" as const,
       children: [
         {
           title: "Introduction",
           path: "/docs/getting-started/introduction",
-          type: "page",
+          type: "page" as const,
         },
         {
           title: "Installation",
           path: "/docs/getting-started/installation",
-          type: "page",
+          type: "page" as const,
         },
       ],
     },
   ],
 };
 
-const navItems = [
-  { href: "/docs", label: "Docs" },
-];
+const navItems = [{ href: "/docs", name: "Docs" }];
 </script>
 
 <template>
-  <div class="w-full max-w-md">
-    <CommandMenu :tree="tree" :nav-items="navItems" />
-  </div>
+  <CommandMenu :tree="tree" :nav-items="navItems" />
 </template>
