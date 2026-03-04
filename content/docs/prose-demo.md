@@ -185,8 +185,8 @@ _Just an italic paragraph._
 
 # tabs
 
-::doc-tabs{default-value="cli"}
-  ::doc-tabs-list
+::::doc-tabs{default-value="cli"}
+  :::doc-tabs-list
     ::doc-tabs-trigger{value="cli"}
     CLI
     ::
@@ -194,14 +194,14 @@ _Just an italic paragraph._
     ::doc-tabs-trigger{value="manual"}
     Manual
     ::
-  ::
+  :::
 
-  ::doc-tabs-content{value="cli"}
+  :::doc-tabs-content{value="cli"}
   ::code-block-command{code="npx shadcn-vue@latest add dialog command"}
   ::
   :::
 
-  ::doc-tabs-content{value="manual"}
+  :::doc-tabs-content{value="manual"}
     ::steps
       ::step
       Install the following dependencies:
