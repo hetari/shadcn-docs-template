@@ -1,5 +1,6 @@
 import type { ContentCollectionItem } from "@nuxt/content";
 import { queryCollection } from "@nuxt/content/server";
+import { getDocsVersion } from "../utils/docs-version";
 
 export type SearchResult = {
   title: string;
@@ -20,6 +21,7 @@ export default defineCachedEventHandler(
     try {
       // Search through all markdown files in the content collection
       const results = (await queryCollection(event, "content")
+        .select("title", "description", "path", "rawbody")
         .where("path", "LIKE", "/docs/%")
         .all()) as ContentCollectionItem[];
 
@@ -101,11 +103,12 @@ export default defineCachedEventHandler(
     }
   },
   {
-    maxAge: 60 * 60, // 1 hour
+    maxAge: 60 * 60 * 24, // 24 hours (invalidates by version key)
     name: "search",
     getKey: (event) => {
       const query = getQuery(event).q;
-      return query ? `q:${query}` : "default";
+      const version = getDocsVersion();
+      return query ? `v:${version}:q:${query}` : `v:${version}:default`;
     },
   },
 );
