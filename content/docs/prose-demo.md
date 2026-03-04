@@ -185,9 +185,39 @@ _Just an italic paragraph._
 
 # tabs
 
-::component-preview
----
-name: TabsDemo
-description: A simple tabs component demo.
----
-::
+::doc-tabs{default-value="cli"}
+  ::doc-tabs-list
+    ::doc-tabs-trigger{value="cli"}
+    CLI
+    ::
+
+    ::doc-tabs-trigger{value="manual"}
+    Manual
+    ::
+  ::
+
+  ::doc-tabs-content{value="cli"}
+  ::code-block-command{code="npx shadcn-vue@latest add dialog command"}
+  ::
+  :::
+
+  ::doc-tabs-content{value="manual"}
+    ::steps
+      ::step
+      Install the following dependencies:
+      ::
+
+      ```bash
+      npm install reka-ui
+      ```
+
+      ::step
+      Copy and paste the source code into your project.
+      ::
+
+      ::step
+      Update the import paths to match your project setup.
+      ::
+    ::
+  :::
+::::
