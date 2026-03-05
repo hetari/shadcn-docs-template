@@ -86,7 +86,7 @@ useSeoMeta({
                     class="extend-touch-target ml-auto size-8 shadow-none md:size-7"
                     as-child
                   >
-                    <NuxtLink :to="neighbours[0].path">
+                    <NuxtLink :to="neighbours[0].path" prefetch-on="interaction">
                       <ArrowLeft />
                       <span class="sr-only">Previous</span>
                     </NuxtLink>
@@ -98,7 +98,7 @@ useSeoMeta({
                     class="extend-touch-target size-8 shadow-none md:size-7"
                     as-child
                   >
-                    <NuxtLink :to="neighbours[1].path">
+                    <NuxtLink :to="neighbours[1].path" prefetch-on="interaction">
                       <span class="sr-only">Next</span>
                       <ArrowRight />
                     </NuxtLink>
@@ -114,12 +114,12 @@ useSeoMeta({
             </div>
             <div v-if="page.links" class="flex items-center space-x-2 pt-4">
               <Badge v-if="page.links.doc" as-child variant="secondary">
-                <NuxtLink :to="page.links.doc" target="_blank" rel="noreferrer">
+                <NuxtLink :to="page.links.doc" target="_blank" rel="noreferrer" prefetch-on="interaction">
                   Docs <ArrowUpRight />
                 </NuxtLink>
               </Badge>
               <Badge v-if="page.links.api" as-child variant="secondary">
-                <NuxtLink :to="page.links.api" target="_blank" rel="noreferrer">
+                <NuxtLink :to="page.links.api" target="_blank" rel="noreferrer" prefetch-on="interaction">
                   API Reference <ArrowUpRight />
                 </NuxtLink>
               </Badge>
@@ -141,7 +141,7 @@ useSeoMeta({
             as-child
             class="shadow-none"
           >
-            <NuxtLink :to="neighbours[0].path">
+            <NuxtLink prefetch-on="interaction" :to="neighbours[0].path">
               <ChevronLeft /> {{ neighbours[0].title }}
             </NuxtLink>
           </Button>
@@ -152,7 +152,7 @@ useSeoMeta({
             class="ml-auto shadow-none"
             as-child
           >
-            <NuxtLink :to="neighbours[1].path">
+            <NuxtLink :to="neighbours[1].path" prefetch-on="interaction">
               {{ neighbours[1].title }} <ChevronRight />
             </NuxtLink>
           </Button>

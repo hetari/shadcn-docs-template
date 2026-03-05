@@ -9,6 +9,7 @@ const props = withDefaults(defineProps<{
 
 <template>
   <NuxtLink
+    prefetch-on="interaction"
     :href="props.href"
     :target="props.target"
     class="font-medium underline underline-offset-4"

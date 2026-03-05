@@ -23,7 +23,7 @@ const docData = computed(() => data.value!.find(i => i.stem === "docs")!);
           size="icon"
           class="hidden size-8 lg:flex"
         >
-          <NuxtLink to="/">
+          <NuxtLink to="/" prefetch-on="interaction">
             <img src="/logo.svg" class="size-5" alt="Logo">
             <span class="sr-only">{{ siteConfig.name }}</span>
           </NuxtLink>

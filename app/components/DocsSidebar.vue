@@ -51,7 +51,7 @@ function isActive(href: string) {
                   after:rounded-md data-[active=true]:border-accent data-[active=true]:bg-accent 3xl:fixed:w-full 3xl:fixed:max-w-48
                 "
               >
-                <NuxtLink :to="href">
+                <NuxtLink :to="href" prefetch-on="interaction">
                   <span
                     class="absolute inset-0 flex w-(--sidebar-width) bg-transparent"
                   />
@@ -91,7 +91,7 @@ function isActive(href: string) {
                     after:rounded-md data-[active=true]:border-accent data-[active=true]:bg-accent 3xl:fixed:w-full 3xl:fixed:max-w-48
                   "
                 >
-                  <NuxtLink :to="childItem?.path">
+                  <NuxtLink :to="childItem?.path" prefetch-on="interaction">
                     <span
                       class="absolute inset-0 flex w-(--sidebar-width) bg-transparent"
                     />

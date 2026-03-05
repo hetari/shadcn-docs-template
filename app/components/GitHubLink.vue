@@ -29,7 +29,7 @@ watch(error, (err) => {
 
 <template>
   <Button as-child class="h-8 shadow-none" size="sm" variant="ghost">
-    <NuxtLink :to="siteConfig.links.github" rel="noreferrer" target="_blank">
+    <NuxtLink :to="siteConfig.links.github" rel="noreferrer" target="_blank" prefetch-on="interaction">
       <GithubIcon />
       <span
         v-if="!pending && (stars || error)"

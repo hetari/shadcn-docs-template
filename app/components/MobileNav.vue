@@ -78,6 +78,7 @@ function handleNavigate(path: string) {
           </div>
           <div class="flex flex-col gap-3">
             <NuxtLink
+              prefetch-on="interaction"
               class="text-2xl font-medium"
               to="/"
               @click="handleNavigate('/')"
@@ -87,6 +88,7 @@ function handleNavigate(path: string) {
             <NuxtLink
               v-for="(item, index) in items"
               :key="index"
+              prefetch-on="interaction"
               class="text-2xl font-medium"
               :to="item.href"
               @click="handleNavigate(item.href)"
@@ -104,6 +106,7 @@ function handleNavigate(path: string) {
               v-for="{ name, href } in NAV_SECTIONS"
               v-show="!(!showMcpDocs && href.includes('/mcp'))"
               :key="name"
+              prefetch-on="interaction"
               :to="href"
               class="text-2xl font-medium"
               @click="handleNavigate(href)"
@@ -122,6 +125,7 @@ function handleNavigate(path: string) {
                 <NuxtLink
                   v-for="item in group.children"
                   :key="item.path"
+                  prefetch-on="interaction"
                   class="flex items-center gap-2 text-2xl font-medium"
                   :to="item.path"
                   @click="handleNavigate(item.path)"

@@ -18,7 +18,7 @@ const useIdFunction = () => useId();
             <PageHeaderHeading>{{ error.statusCode }}</PageHeaderHeading>
             <PageHeaderDescription>{{ error.message }}</PageHeaderDescription>
             <Button as-child class="mt-6 w-fit">
-              <NuxtLink to="/">
+              <NuxtLink to="/" prefetch-on="interaction">
                 Go back home
               </NuxtLink>
             </Button>

@@ -20,6 +20,7 @@ const { path } = toRefs(useRoute());
       variant="ghost"
     >
       <NuxtLink
+        prefetch-on="interaction"
         :class="
           cn(
             'transition-colors hover:text-primary',
