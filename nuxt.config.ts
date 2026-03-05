@@ -17,6 +17,39 @@ export default defineNuxtConfig({
     "@nuxt/fonts",
   ],
 
+  routeRules: {
+    // Home page - static content, prerender at build time
+    "/": {
+      prerender: true,
+    },
+    // Docs layout - uses navigation data, cache for 1 hour
+    "/docs": {
+      isr: 3600,
+    },
+    // All docs pages - content pages that don't change frequently
+    // ISR: Generate at build/first request, cache for 1 hour, regenerate in background
+    "/docs/**": {
+      isr: 3600,
+    },
+    // API routes - additional caching (search already has its own cache)
+    "/api/search": {
+      headers: {
+        "Cache-Control": "public, max-age=3600, s-maxage=3600",
+      },
+    },
+    "/api/docs-version": {
+      headers: {
+        "Cache-Control": "public, max-age=300, s-maxage=300",
+      },
+    },
+    // Raw markdown content endpoint
+    "/raw/**": {
+      headers: {
+        "Cache-Control": "public, max-age=3600, s-maxage=3600",
+      },
+    },
+  },
+
   ogImage: {
     fonts: ["Geist:400", "Geist:500", "Geist:600"],
     defaults: {
