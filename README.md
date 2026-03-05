@@ -4,10 +4,9 @@
 
 A production-ready documentation template built with **Nuxt 4.3.1** and **shadcn-vue**. Engineered for speed, clarity, and developer sanity.
 
-<img src="./white.png" alt="shadcn-docs-template" width="100%" />
+<img src="https://raw.githubusercontent.com/hetari/shadcn-docs-template/main/white.png" width="100%" />
 <br />
-<img src="./black.png" alt="shadcn-docs-template" width="100%" />
-
+<img src="https://raw.githubusercontent.com/hetari/shadcn-docs-template/main/black.png" width="100%" />
 
 ## 📚 Documentation
 For more information, please visit the [Documentation](https://shadcn-docs-template-aotvvb.cranl.net).
