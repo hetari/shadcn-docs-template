@@ -2,7 +2,7 @@
 
 ### Enjoying my project? Please show your appreciation by starring it on GitHub! ⭐
 
-A production-ready documentation template built with **Nuxt 4.3.1** and **shadcn-vue**. Engineered for speed, clarity, and developer sanity.
+A production-ready documentation template built with **Nuxt 4.4** and **shadcn-vue**. Engineered for speed, clarity, and developer sanity.
 
 <img src="https://raw.githubusercontent.com/hetari/shadcn-docs-template/main/white.png" width="100%" />
 <br />
@@ -13,7 +13,7 @@ For more information, please visit the [Documentation](https://shadcn-docs-templ
 
 ## ✨ Features
 
-- **Nuxt 4.3 & Nuxt Content 3**: The latest and greatest from the Nuxt ecosystem.
+- **Nuxt 4.4 & Nuxt Content 3**: The latest and greatest from the Nuxt ecosystem.
 - **Shadcn Vue Integration**: Beautifully designed components ready to use.
 - **Tailwind CSS 4**: Modern styling with the latest Tailwind features.
 - **MDC Components**: Rich Markdown support with custom components like `Callout`, `ComponentPreview`, and more.
