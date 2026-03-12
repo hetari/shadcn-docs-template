@@ -13,11 +13,14 @@ const props = defineProps<{
   unwrap?: boolean;
 }>();
 
+// Move regex to module scope to avoid re-compilation on every call
+const TITLE_REGEX = /title="([^"]+)"/;
+
 const npmBlock = ["npm install", "npm create", "npm run", "npx"];
 const isNpmCommand = computed(() => npmBlock.some(s => props.code.startsWith(s)));
 const isShowingLineNumber = computed(() => props.meta?.includes("showLineNumbers"));
 
-const title = computed(() => props.filename || props.meta?.match(/title="([^"]+)"/)?.[1]);
+const title = computed(() => props.filename || props.meta?.match(TITLE_REGEX)?.[1]);
 
 const lang = computed(() => props.language.replace("language-", ""));
 const IconExtension = computed(() => {

@@ -1,8 +1,10 @@
-export function fixImport(content: string): string {
-  const regex
-    = /@\/[^/]+\/((?:.*?\/)?(?:components|ui|composables|lib))\/([\w-]+)/g;
+const IMPORT_REGEX
+  = /@\/[^/]+\/((?:.*?\/)?(?:components|ui|composables|lib))\/([\w-]+)/g;
 
-  const replacement = (match: string, type: string, component: string) => {
+export function fixImport(content: string): string {
+  const replacement = (...args: any[]) => {
+    const [match, type, component] = args;
+
     if (type.endsWith("components")) {
       return `@/components/${component}`;
     }
@@ -19,5 +21,5 @@ export function fixImport(content: string): string {
     return match;
   };
 
-  return content.replace(regex, replacement);
+  return content.replace(IMPORT_REGEX, replacement);
 }

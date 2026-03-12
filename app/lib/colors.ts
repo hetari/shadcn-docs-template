@@ -9,8 +9,8 @@ const colorSchema = z.object({
   hex: z.string(),
   rgb: z.string(),
   hsl: z.string(),
-  foreground: z.string(),
   oklch: z.string(),
+  foreground: z.string(),
   var: z.string(),
 });
 
@@ -20,6 +20,11 @@ const colorPaletteSchema = z.object({
 });
 
 export type ColorPalette = z.infer<typeof colorPaletteSchema>;
+
+// Move regexes to module scope to avoid re-compilation on every call
+const RGB_RE = /^rgb\((\d+),(\d+),(\d+)\)$/;
+const HSL_RE = /^hsl\(([\d.]+),([\d.]+%),([\d.]+%)\)$/;
+const OKLCH_RE = /^oklch\(([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\)$/;
 
 export function getColorFormat(color: Color) {
   return {
@@ -45,10 +50,7 @@ export function getColors() {
         return {
           name,
           colors: color.map((color) => {
-            const rgb = color.rgb.replace(
-              /^rgb\((\d+),(\d+),(\d+)\)$/,
-              "$1 $2 $3",
-            );
+            const rgb = color.rgb.replace(RGB_RE, "$1 $2 $3");
 
             return {
               ...color,
@@ -57,14 +59,8 @@ export function getColors() {
               className: `${name}-${color.scale}`,
               var: `--color-${name}-${color.scale}`,
               rgb,
-              hsl: color.hsl.replace(
-                /^hsl\(([\d.]+),([\d.]+%),([\d.]+%)\)$/,
-                "$1 $2 $3",
-              ),
-              oklch: `oklch(${color.oklch.replace(
-                /^oklch\(([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\)$/,
-                "$1 $2 $3",
-              )})`,
+              hsl: color.hsl.replace(HSL_RE, "$1 $2 $3"),
+              oklch: `oklch(${color.oklch.replace(OKLCH_RE, "$1 $2 $3")})`,
               foreground: getForegroundFromBackground(rgb),
             };
           }),

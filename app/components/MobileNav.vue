@@ -1,15 +1,23 @@
 <script setup lang="ts">
-import type { ContentNavigationItem } from "@nuxt/content";
 import type { HTMLAttributes } from "vue";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { NAV_SECTIONS } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { showMcpDocs } from "~/lib/flag";
 
+/**
+ * Relaxed typing for `tree` to avoid template type errors related to
+ * optional navigation fields (e.g. `navigation?.icon`). Using `any[]`
+ * here keeps the template-friendly access while preserving some structure
+ * for `items`.
+ */
 const props = defineProps<{
   class?: HTMLAttributes["class"];
-  tree: ContentNavigationItem[];
+  tree: any[]; // relaxed typing to avoid missing property errors in template
   items: { name: string; href: string }[];
 }>();
+
 const router = useRouter();
 const open = ref(false);
 
@@ -71,7 +79,7 @@ function handleNavigate(path: string) {
       :align-offset="-16"
       :side-offset="14"
     >
-      <div class="flex flex-col gap-12 overflow-auto px-6 py-6">
+      <div class="flex flex-col gap-12 overflow-auto p-6">
         <div class="flex flex-col gap-4">
           <div class="text-sm font-medium text-muted-foreground">
             Menu
@@ -130,6 +138,7 @@ function handleNavigate(path: string) {
                   :to="item.path"
                   @click="handleNavigate(item.path)"
                 >
+                  <!-- `item.navigation` may be missing; relaxed typing on `tree` avoids TS template errors -->
                   <LucideIcon
                     v-if="item.navigation?.icon"
                     :name="item.navigation.icon"

@@ -1,5 +1,7 @@
 import { queryCollection } from "@nuxt/content/server";
 
+const MD_EXT_REGEX = /\.md$/;
+
 export default defineEventHandler(async (event) => {
   const path = event.context.params?.path;
   if (!path) {
@@ -9,7 +11,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const contentPath = `/${path.replace(/\.md$/, "")}`;
+  const contentPath = `/${path.replace(MD_EXT_REGEX, "")}`;
 
   const page = (await queryCollection(event, "content")
     .path(contentPath)

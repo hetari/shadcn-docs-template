@@ -7,7 +7,7 @@ defineProps({
 
 <template>
   <div
-    class="flex h-full w-full bg-black text-white"
+    class="flex size-full bg-black text-white"
     :style="{ fontFamily: 'Geist' }"
   >
     <div class="absolute inset-y-0 left-16 flex w-px border border-dashed border-stone-700" />
@@ -47,7 +47,7 @@ defineProps({
         />
       </svg>
     </div>
-    <div class="absolute top-32 right-32 bottom-32 left-32 flex w-[896px] flex-col justify-center">
+    <div class="absolute inset-32 flex w-[896px] flex-col justify-center">
       <div
         class="flex grow flex-col justify-center leading-[1.1] tracking-tight"
         :style="{

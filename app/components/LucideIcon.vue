@@ -7,9 +7,13 @@ const props = defineProps<{
   class?: string;
 }>();
 
+// Move regular expressions to module scope to avoid re-compilation on every render
+const LUCIDE_PREFIX_RE = /^lucide:/;
+const ICON_PREFIX_RE = /^icon-/;
+
 const iconComponent = computed(() => {
   // Remove prefixes
-  const cleanName = props.name.replace(/^lucide:/, "").replace(/^icon-/, "");
+  const cleanName = props.name.replace(LUCIDE_PREFIX_RE, "").replace(ICON_PREFIX_RE, "");
 
   // Convert kebab-case to PascalCase (e.g., 'house' -> 'House', 'arrow-left' -> 'ArrowLeft')
   const pascalName = cleanName
