@@ -44,6 +44,14 @@ For more information, please visit the [Documentation](https://shadcn-docs-templ
    bun install
    ```
 
+### Upgrade
+To upgrade to the latest version, run:
+
+```bash
+bunx --bun nuxt@latest upgrade
+bun update # this will update all dependencies to their latest versions, including Nuxt and its related packages, not recommended if you want to keep the current versions of some packages, but it will ensure that all packages are updated to their latest versions, including Nuxt and its related packages.
+```
+
 ### Development
 
 Start the development server:
