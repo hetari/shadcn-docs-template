@@ -131,8 +131,8 @@ export default defineNuxtConfig({
       },
     },
     database: {
-      type: "d1",
-      bindingName: "DB",
+      type: "sqlite",
+      filename: ".data/content.db",
     },
     // required to prevent error related to better-sqlite3 during build and deploy
     experimental: {
