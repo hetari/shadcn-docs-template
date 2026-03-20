@@ -9,8 +9,12 @@ export type NavigationItem = {
   path: string;
   stem?: string;
   children?: NavigationItem[];
-  page?: false;
+  page?: boolean;
   type?: NavigationItemType;
+  new?: boolean;
+  navigation?: {
+    icon?: string;
+  };
   [key: string]: unknown;
 };
 
@@ -50,7 +54,7 @@ export async function useNavigation() {
   const { data } = useAsyncData(
     "navigation",
     () => {
-      return queryCollectionNavigation("content", []);
+      return queryCollectionNavigation("content", ["navigation", "new"]);
     },
     {
       default: () => [],

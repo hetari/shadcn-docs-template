@@ -17,6 +17,7 @@ export default defineContentConfig({
           })
           .optional(),
         new: z.boolean().optional(),
+        lastUpdated: z.string().optional(),
         navigation: z
           .object({
             icon: z.string().optional(),

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { ContentNavigationItem } from "@nuxt/content";
 import { showMcpDocs } from "~/lib/flag";
 import {
   NAV_SECTIONS,
@@ -7,8 +6,19 @@ import {
   SIDEBAR_EXCLUDED_SECTIONS,
 } from "~/lib/navigation";
 
+type SidebarNavigationItem = {
+  title: string;
+  path: string;
+  stem?: string;
+  children?: SidebarNavigationItem[];
+  new?: boolean;
+  navigation?: {
+    icon?: string;
+  };
+};
+
 defineProps<{
-  tree: ContentNavigationItem;
+  tree: SidebarNavigationItem;
 }>();
 
 const { path } = toRefs(useRoute());
@@ -63,7 +73,7 @@ function isActive(href: string) {
         </SidebarGroupContent>
       </SidebarGroup>
       <SidebarGroup
-        v-for="item in tree.children?.filter(
+        v-for="item in (tree.children || []).filter(
           (section) =>
             !SIDEBAR_EXCLUDED_SECTIONS.includes(
               section.title.toLocaleLowerCase(),
@@ -77,7 +87,7 @@ function isActive(href: string) {
         <SidebarGroupContent>
           <SidebarMenu class="gap-0.5">
             <template
-              v-for="childItem in item?.children?.filter(
+              v-for="childItem in (item?.children || []).filter(
                 (child) => !SIDEBAR_EXCLUDED_PAGES.includes(child.path),
               )"
               :key="childItem.path"
@@ -101,11 +111,14 @@ function isActive(href: string) {
                       class="mr-2 size-4 shrink-0"
                     />
                     {{ childItem.title }}
-                    <span
+                    <Badge
                       v-if="childItem.new"
-                      class="flex size-2 rounded-full bg-green-500"
-                      title="New"
-                    />
+                      variant="secondary"
+                      class="inline-flex h-5 items-center gap-1 rounded-md border-0 bg-green-500/10 px-2 text-[0.65rem] font-semibold tracking-wide text-green-600 uppercase"
+                    >
+                      <span class="size-1.5 rounded-full bg-green-500" />
+                      New
+                    </Badge>
                   </NuxtLink>
                 </SidebarMenuButton>
               </SidebarMenuItem>
