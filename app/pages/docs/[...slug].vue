@@ -45,6 +45,11 @@ useSeoMeta({
   ogDescription: page.value.description,
   twitterCard: "summary_large_image",
 });
+
+defineOgImageComponent("Custom", {
+  title: page.value.title,
+  description: page.value.description,
+});
 </script>
 
 <template>
