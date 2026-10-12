@@ -34,7 +34,7 @@ const { rootPages, folderGroups } = useSidebarSections(() => props.tree);
                 :is-active="item.path === path"
                 class="
                   relative h-7.5 w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0
-                  after:rounded-md data-[active=true]:border-accent data-[active=true]:bg-accent 3xl:fixed:w-full 3xl:fixed:max-w-48
+                  after:rounded-md data-[active=true]:bg-accent 3xl:fixed:w-full 3xl:fixed:max-w-48
                 "
               >
                 <NuxtLink :to="item.path" prefetch-on="interaction">
@@ -47,11 +47,11 @@ const { rootPages, folderGroups } = useSidebarSections(() => props.tree);
                   {{ item.title }}
                   <span
                     v-if="item.new"
-                    class="size-2 items-center gap-1 rounded-md border-0 bg-green-600 dark:bg-green-500"
+                    class="size-2 items-center gap-1 rounded-md border-0 bg-green-500"
                   />
                   <span
                     v-else-if="item.beta"
-                    class="size-2 items-center gap-1 rounded-md border-0 bg-orange-600 dark:bg-orange-500"
+                    class="size-2 items-center gap-1 rounded-md border-0 bg-orange-500"
                   />
                   <Badge
                     v-if="item.soon"
@@ -94,7 +94,7 @@ const { rootPages, folderGroups } = useSidebarSections(() => props.tree);
                   :is-active="childItem?.path === path"
                   class="
                     relative h-7.5 w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0
-                    after:rounded-md data-[active=true]:border-accent data-[active=true]:bg-accent 3xl:fixed:w-full 3xl:fixed:max-w-48
+                    after:rounded-md data-[active=true]:bg-accent 3xl:fixed:w-full 3xl:fixed:max-w-48
                   "
                 >
                   <NuxtLink :to="childItem?.path" prefetch-on="interaction">
@@ -107,11 +107,11 @@ const { rootPages, folderGroups } = useSidebarSections(() => props.tree);
                     {{ childItem.title }}
                     <span
                       v-if="childItem.new"
-                      class="size-2 items-center gap-1 rounded-md border-0 bg-green-600 dark:bg-green-500"
+                      class="size-2 items-center gap-1 rounded-md border-0 bg-green-500"
                     />
                     <span
                       v-else-if="childItem.beta"
-                      class="size-2 items-center gap-1 rounded-md border-0 bg-orange-600 dark:bg-orange-500"
+                      class="size-2 items-center gap-1 rounded-md border-0 bg-orange-500"
                     />
                     <Badge
                       v-if="childItem.soon"
@@ -133,3 +133,10 @@ const { rootPages, folderGroups } = useSidebarSections(() => props.tree);
     </SidebarContent>
   </Sidebar>
 </template>
+
+<style scoped>
+:deep([data-sidebar="menu-button"][data-active="true"]),
+[data-sidebar="menu-button"][data-active="true"] {
+  border-color: var(--accent);
+}
+</style>

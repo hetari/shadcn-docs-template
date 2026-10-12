@@ -22,17 +22,27 @@ const open = ref(false);
 
     <CollapsibleContent
       force-mount
-      class="relative mt-6 overflow-hidden data-[state=closed]:max-h-64 [&>figure]:mt-0 [&>figure]:md:mx-0!"
+      class="relative mt-6 overflow-hidden data-[state=closed]:max-h-64"
     >
       <slot />
     </CollapsibleContent>
     <CollapsibleTrigger
-      class="
-        absolute inset-x-0 -bottom-2 flex h-20 items-center justify-center rounded-b-lg bg-linear-to-b from-code/70 to-code text-sm text-muted-foreground
-        group-data-[state=open]/collapsible:hidden
-      "
+      v-show="!open"
+      class="absolute inset-x-0 -bottom-2 flex h-20 items-center justify-center rounded-b-lg bg-linear-to-b from-code/70 to-code text-sm text-muted-foreground"
     >
       {{ open ? 'Collapse' : 'Expand' }}
     </CollapsibleTrigger>
   </Collapsible>
 </template>
+
+<style scoped>
+:deep(> figure) {
+  margin-top: 0;
+}
+@media (min-width: 768px) {
+  :deep(> figure) {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+</style>

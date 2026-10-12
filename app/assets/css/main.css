@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 @custom-variant fixed (&:is(.layout-fixed *));
 
 @theme inline {
@@ -177,7 +177,11 @@
   It uses the border color with 50% opacity for light mode and the full border color for dark mode, ensuring visibility and contrast across themes.
 */
 @utility border-grid {
-  @apply border-border/50 dark:border-border;
+  border-color: color-mix(in oklab, var(--border) 50%, transparent);
+
+  @variant dark {
+    border-color: var(--border);
+  }
 }
 
 /*
@@ -208,7 +212,21 @@
   It uses the border color for the after pseudo-element, which is positioned absolutely to cover the entire element, and applies a mix-blend mode to darken the border in light mode and lighten it in dark mode, creating a subtle and visually appealing border effect that adapts to the theme.
 */
 @utility border-ghost {
-  @apply after:border-border relative after:absolute after:inset-0 after:border after:mix-blend-darken dark:after:mix-blend-lighten;
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--border);
+    mix-blend-mode: darken;
+
+    @variant dark {
+      mix-blend-mode: lighten;
+    }
+  }
 }
 
 /*

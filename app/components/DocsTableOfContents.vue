@@ -74,7 +74,6 @@ onMounted(() => {
         :key="item.id"
         :data-depth="item.depth"
         as-child
-        class="data-[depth=3]:pl-6 data-[depth=4]:pl-8"
         @click="open = true"
       >
         <a :href="`${path}#${item.id}`">{{ item.text }}</a>
@@ -96,9 +95,27 @@ onMounted(() => {
       :data-active="item.id === activeHeading"
       :data-depth="item.depth"
       :href="`${path}#${item.id}`"
-      class="text-[0.8rem] text-muted-foreground no-underline transition-colors hover:text-foreground data-[active=true]:text-foreground data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+      class="text-[0.8rem] text-muted-foreground no-underline transition-colors hover:text-foreground"
     >
       {{ item.text }}
     </a>
   </div>
 </template>
+
+<style scoped>
+:deep([data-slot="dropdown-menu-item"][data-depth="3"]) {
+  padding-left: 1.5rem;
+}
+:deep([data-slot="dropdown-menu-item"][data-depth="4"]) {
+  padding-left: 2rem;
+}
+a[data-depth="3"] {
+  padding-left: 1rem;
+}
+a[data-depth="4"] {
+  padding-left: 1.5rem;
+}
+a[data-active="true"] {
+  color: var(--foreground);
+}
+</style>

@@ -1,5 +1,6 @@
 export type Links = {
   github: string;
+  x: string;
   githubAPI: string;
 };
 
@@ -11,7 +12,7 @@ export type SiteConfig = {
   links: Links;
 };
 
-const repoUrl = "https://github.com/hetari/sulaf";
+const repoUrl = "https://github.com/hetari/shadcn-docs-template";
 
 export const siteConfig: SiteConfig = {
   name: "shadcn-docs-template",
@@ -22,6 +23,7 @@ export const siteConfig: SiteConfig = {
     "Simple, powerful and flexible site generation framework with everything you love from Nuxt.js & Shadcn Vue",
   links: {
     github: repoUrl,
+    x: "https://x.com/hetaridev",
     githubAPI: "https://api.github.com/repos/hetari/shadcn-docs-template",
   },
 };

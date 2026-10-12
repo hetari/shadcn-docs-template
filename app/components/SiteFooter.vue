@@ -4,7 +4,7 @@ import { siteConfig } from "~/lib/siteConfig";
 
 <template>
   <footer
-    class="group-has-[.section-soft]/body:bg-surface/40 dark:bg-transparent 3xl:fixed:bg-transparent"
+    class="dark:bg-transparent 3xl:fixed:bg-transparent"
   >
     <div class="container-wrapper px-4 xl:px-6">
       <div class="flex h-(--footer-height) items-center justify-between">
@@ -30,3 +30,15 @@ import { siteConfig } from "~/lib/siteConfig";
     </div>
   </footer>
 </template>
+
+<style scoped>
+:global(body:has(.section-soft)) footer,
+:global(.group\/body:has(.section-soft)) footer {
+  background-color: color-mix(in oklch, var(--surface) 40%, transparent);
+}
+
+:global(.dark body:has(.section-soft)) footer,
+:global(.dark .group\/body:has(.section-soft)) footer {
+  background-color: transparent;
+}
+</style>

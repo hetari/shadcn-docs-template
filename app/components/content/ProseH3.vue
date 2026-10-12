@@ -11,7 +11,7 @@ const props = defineProps<{
   <h3
     :class="
       cn(
-        'mt-12 scroll-m-28 font-heading text-lg font-medium tracking-tight [&+p]:mt-4! *:[code]:text-xl',
+        'mt-12 scroll-m-28 font-heading text-lg font-medium tracking-tight',
         props.class,
       )
     "
@@ -19,3 +19,13 @@ const props = defineProps<{
     <slot />
   </h3>
 </template>
+
+<style scoped>
+:deep(+ p) {
+  margin-top: 1rem !important;
+}
+:deep(code) {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+</style>

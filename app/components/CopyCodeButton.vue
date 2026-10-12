@@ -12,8 +12,6 @@ const props = defineProps<{
   class?: HTMLAttributes["class"];
   size?: ButtonVariants["size"];
 }>();
-
-const { config } = useConfig();
 </script>
 
 <template>
@@ -26,16 +24,13 @@ const { config } = useConfig();
     <DrawerContent class="h-auto">
       <DrawerHeader>
         <DrawerTitle class="capitalize">
-          TODO
-          <!-- {{
-            config.activeTheme === "neutral" ? "Default" : config.activeTheme
-          }} -->
+          Theme Code
         </DrawerTitle>
         <DrawerDescription>
           Copy and paste the following code into your CSS file.
         </DrawerDescription>
       </DrawerHeader>
-      <!-- <CustomizerCode :theme-name="config.activeTheme" /> -->
+      <slot />
     </DrawerContent>
   </Drawer>
   <Dialog>
@@ -47,24 +42,23 @@ const { config } = useConfig();
         v-bind="$attrs"
       >
         <CopyIcon />
-        <span class="group-data-[size=icon-sm]/button:sr-only"> Copy Code </span>
+        <span class="group-data-[size=icon-sm]/button:sr-only">
+          Copy Code
+        </span>
       </Button>
     </DialogTrigger>
     <DialogContent
-      class="rounded-xl border-none bg-clip-padding shadow-2xl ring-4 ring-neutral-200/80 outline-none md:max-w-2xl dark:bg-neutral-800 dark:ring-neutral-900"
+      class="rounded-xl border-none bg-clip-padding shadow-2xl ring-4 ring-border/80 outline-none md:max-w-2xl"
     >
       <DialogHeader>
         <DialogTitle class="capitalize">
-          s
-          <!-- {{
-            config.activeTheme === "neutral" ? "Default" : config.activeTheme
-          }} -->
+          Theme Code
         </DialogTitle>
         <DialogDescription>
           Copy and paste the following code into your CSS file.
         </DialogDescription>
       </DialogHeader>
-      <CustomizerCode :theme-name="config.activeTheme" />
+      <slot />
     </DialogContent>
   </Dialog>
 </template>

@@ -25,7 +25,8 @@ const props = withDefaults(
         :data-align="align"
         :class="
           cn(
-            'flex w-full items-center justify-center data-[align=center]:items-center data-[align=end]:items-end data-[align=start]:items-start',
+            'flex w-full justify-center',
+            props.align === 'end' ? 'items-end' : props.align === 'start' ? 'items-start' : 'items-center',
             chromeLessOnMobile ? 'sm:p-10' : 'h-112.5 p-10',
           )
         "

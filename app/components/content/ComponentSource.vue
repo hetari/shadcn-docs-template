@@ -62,7 +62,7 @@ const code = await getCode();
       <figcaption
         v-if="title"
         data-pretty-code-title=""
-        class="flex items-center gap-2 text-code-foreground [&_svg]:size-4 [&_svg]:text-code-foreground [&_svg]:opacity-70"
+        class="flex items-center gap-2 text-code-foreground [&_svg]:size-4 [&_svg]:opacity-70"
         :data-language="language"
       >
         <component :is="getIconForLanguageExtension(language)" />

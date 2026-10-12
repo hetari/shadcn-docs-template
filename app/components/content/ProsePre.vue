@@ -79,7 +79,7 @@ const codeAttributes = computed(() =>
     v-if="unwrap"
     :class="
       cn(
-        `no-scrollbar min-w-0 overflow-x-auto bg-transparent! px-4 py-3.5 outline-none has-data-highlighted-line:px-0 has-data-line-numbers:px-0 has-data-[slot=tabs]:p-0`,
+        `no-scrollbar min-w-0 overflow-x-auto bg-transparent! py-3.5 outline-none`,
         props.class,
       )
     "
@@ -90,7 +90,7 @@ const codeAttributes = computed(() =>
       v-if="isNpmCommand"
       :class="
         cn(
-          `no-scrollbar min-w-0 overflow-x-auto px-4 py-3.5 outline-none has-data-highlighted-line:px-0 has-data-line-numbers:px-0 has-data-[slot=tabs]:p-0`,
+          `no-scrollbar min-w-0 overflow-x-auto py-3.5 outline-none`,
           props.class,
         )
       "
@@ -100,7 +100,7 @@ const codeAttributes = computed(() =>
       <figcaption
         data-pretty-code-title
         :data-language="lang"
-        class="flex items-center gap-2 text-code-foreground [&_svg]:size-4 [&_svg]:text-code-foreground [&_svg]:opacity-70"
+        class="flex items-center gap-2 text-code-foreground [&_svg]:size-4 [&_svg]:opacity-70"
       >
         <component :is="IconExtension" v-if="IconExtension" />
         {{ title }}
@@ -109,7 +109,7 @@ const codeAttributes = computed(() =>
         :data-language="lang"
         :class="
           cn(
-            `no-scrollbar min-w-0 overflow-x-auto px-4 py-3.5 outline-none has-data-highlighted-line:px-0 has-data-line-numbers:px-0 has-data-[slot=tabs]:p-0`,
+            `no-scrollbar min-w-0 overflow-x-auto py-3.5 outline-none`,
             props.class,
           )
         "
@@ -121,10 +121,25 @@ const codeAttributes = computed(() =>
       :data-language="lang"
       :class="
         cn(
-          `no-scrollbar min-w-0 overflow-x-auto px-4 py-3.5 outline-none has-data-highlighted-line:px-0 has-data-line-numbers:px-0 has-data-[slot=tabs]:p-0`,
+          `no-scrollbar min-w-0 overflow-x-auto py-3.5 outline-none`,
           props.class,
         )
       "
     ><CopyButton :value="code" /><code v-bind="codeAttributes" v-html="highlighted" /></pre>
   </figure>
 </template>
+
+<style scoped>
+pre {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+pre:has([data-highlighted-line]),
+pre:has([data-line-numbers]) {
+  padding-left: 0;
+  padding-right: 0;
+}
+pre:has([data-slot="tabs"]) {
+  padding: 0;
+}
+</style>

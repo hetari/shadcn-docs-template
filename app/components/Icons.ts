@@ -3,8 +3,8 @@ import { FileIcon } from "lucide-vue-next";
 import { defineComponent, h } from "vue";
 
 type IconProps = {
-  class?: string;
-  style?: Record<string, any>;
+  class?: any;
+  style?: any;
   [key: string]: any;
 };
 

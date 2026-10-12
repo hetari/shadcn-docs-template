@@ -126,13 +126,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <Dialog v-model:open="open" :unmount-on-hide="false">
+  <Dialog v-model:open="open">
     <DialogTrigger as-child>
       <Button
         variant="secondary"
         :class="
           cn(
-            'relative h-8 w-full justify-start bg-surface pl-3 font-medium text-foreground shadow-none sm:pr-12 md:w-48 lg:w-56 xl:w-64 dark:bg-card',
+            'relative h-8 w-full justify-start bg-surface pl-3 font-medium text-foreground shadow-none sm:pr-12 md:w-48 lg:w-56 xl:w-64',
           )
         "
       >
@@ -147,7 +147,7 @@ onMounted(() => {
       </Button>
     </DialogTrigger>
     <DialogContent
-      class="rounded-xl border-none bg-clip-padding p-2 pb-11 shadow-2xl ring-4 ring-neutral-200/80 dark:bg-neutral-900 dark:ring-neutral-800"
+      class="rounded-xl border-none bg-clip-padding p-2 pb-11 shadow-2xl ring-4 ring-border/80"
       :show-close-button="false"
     >
       <DialogHeader class="sr-only">
@@ -156,16 +156,14 @@ onMounted(() => {
       </DialogHeader>
       <Command
         highlight-on-hover
-        class="
-          rounded-none bg-transparent **:data-[slot=command-input]:h-9! **:data-[slot=command-input]:py-0 **:data-[slot=command-input-wrapper]:mb-0
-          **:data-[slot=command-input-wrapper]:h-9! **:data-[slot=command-input-wrapper]:rounded-md **:data-[slot=command-input-wrapper]:border
-          **:data-[slot=command-input-wrapper]:border-input **:data-[slot=command-input-wrapper]:bg-input/50
-        "
+        class="rounded-none bg-transparent"
         :filter="filterCommandItem"
       >
         <CommandInput
           v-model="searchQuery"
           placeholder="Search documentation..."
+          class="h-9! py-0"
+          wrapper-class="mb-0 h-9! rounded-md border border-input bg-input/50"
         />
         <CommandList class="no-scrollbar min-h-80 scroll-pt-2 scroll-pb-1.5">
           <CommandEmpty class="py-12 text-center text-sm text-muted-foreground">
@@ -177,7 +175,8 @@ onMounted(() => {
           <CommandGroup
             v-if="searchResults.length > 0"
             heading="Search Results"
-            class="p-0! **:data-[slot=command-group-heading]:scroll-mt-16 **:data-[slot=command-group-heading]:p-3! **:data-[slot=command-group-heading]:pb-1!"
+            class="p-0!"
+            heading-class="scroll-mt-16 p-3! pb-1!"
           >
             <CommandItem
               v-for="result in searchResults"
@@ -214,7 +213,8 @@ onMounted(() => {
                 && (!searchQuery || searchQuery.length < 2)
             "
             heading="Pages"
-            class="p-0! **:data-[slot=command-group-heading]:scroll-mt-16 **:data-[slot=command-group-heading]:p-3! **:data-[slot=command-group-heading]:pb-1!"
+            class="p-0!"
+            heading-class="scroll-mt-16 p-3! pb-1!"
           >
             <CommandItem
               v-for="item in navItems"
@@ -238,7 +238,8 @@ onMounted(() => {
             v-for="group in docGroups"
             :key="group.title"
             :heading="group.title"
-            class="p-0! **:data-[slot=command-group-heading]:scroll-mt-16 **:data-[slot=command-group-heading]:p-3! **:data-[slot=command-group-heading]:pb-1!"
+            class="p-0!"
+            heading-class="scroll-mt-16 p-3! pb-1!"
           >
             <CommandItem
               v-for="item in group.items"
@@ -265,7 +266,8 @@ onMounted(() => {
           <CommandGroup
             v-if="!searchQuery || searchQuery.length < 2"
             heading="Actions"
-            class="p-0! **:data-[slot=command-group-heading]:p-3!"
+            class="p-0!"
+            heading-class="p-3!"
           >
             <CommandMenuItem
               value="click to copy"
@@ -282,7 +284,8 @@ onMounted(() => {
           <CommandGroup
             v-if="blocks?.length && (!searchQuery || searchQuery.length < 2)"
             heading="Blocks"
-            class="p-0! **:data-[slot=command-group-heading]:p-3!"
+            class="p-0!"
+            heading-class="p-3!"
           >
             <CommandMenuItem
               v-for="block in blocks"
@@ -314,17 +317,13 @@ onMounted(() => {
         </CommandList>
       </Command>
       <div
-        class="
-          absolute inset-x-0 bottom-0 z-20 flex h-10 items-center gap-2 rounded-b-xl border-t border-t-neutral-100 bg-neutral-50 px-4 text-xs font-medium text-muted-foreground
-          dark:border-t-neutral-700 dark:bg-neutral-800
-        "
+        class="absolute inset-x-0 bottom-0 z-20 flex h-10 items-center gap-2 rounded-b-xl border-t border-border/80 bg-muted/50 px-4 text-xs font-medium text-muted-foreground"
       >
         <div class="flex items-center gap-2">
           <CommandMenuKbd>
             <CornerDownLeft />
           </CommandMenuKbd>
-          <span v-if="selectedType === 'page' || selectedType === 'component'">Go to Page</span>
-          <span v-if="selectedType === 'copy'">Click to Copy</span>
+          <span> Go to Page </span>
         </div>
         <Separator v-if="copyPayload" orientation="vertical" class="h-4!" />
         <div v-if="copyPayload" class="flex items-center gap-1">

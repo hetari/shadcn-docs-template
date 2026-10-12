@@ -57,7 +57,7 @@ const { config } = useConfig();
             v-for="key in Object.keys(tabs)"
             :key="key"
             :value="key"
-            class="h-7 border border-transparent pt-1.5 data-[state=active]:border-input data-[state=active]:bg-accent data-[state=active]:shadow-none"
+            class="h-7 pt-1.5 data-[state=active]:border-input data-[state=active]:bg-accent data-[state=active]:shadow-none"
           >
             {{ key }}
           </TabsTrigger>
@@ -81,7 +81,7 @@ const { config } = useConfig();
     </Tabs>
 
     <CopyButton
-      class="absolute top-2 right-2 z-10 size-7 opacity-70 hover:opacity-100 focus-visible:opacity-100"
+      class="top-2 opacity-70"
       :value="tabs[config.packageManager]"
     />
   </div>

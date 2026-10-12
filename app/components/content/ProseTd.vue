@@ -11,7 +11,7 @@ const props = defineProps<{
   <td
     :class="
       cn(
-        'px-4 py-2 text-left [[align=center]]:text-center [[align=right]]:text-right',
+        'px-4 py-2',
         props.class,
       )
     "
@@ -19,3 +19,15 @@ const props = defineProps<{
     <slot />
   </td>
 </template>
+
+<style scoped>
+td {
+  text-align: left;
+}
+td[align="center"] {
+  text-align: center;
+}
+td[align="right"] {
+  text-align: right;
+}
+</style>

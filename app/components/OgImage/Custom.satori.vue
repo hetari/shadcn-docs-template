@@ -47,7 +47,7 @@ defineProps({
         />
       </svg>
     </div>
-    <div class="absolute inset-32 flex w-[896px] flex-col justify-center">
+    <div class="absolute inset-32 flex w-4xl flex-col justify-center">
       <div
         class="flex grow flex-col justify-center leading-[1.1] tracking-tight"
         :style="{

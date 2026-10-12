@@ -24,7 +24,7 @@ const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
   <div
     v-if="collapsible === 'none'"
     data-slot="sidebar"
-    :class="cn('flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground', props.class)"
+    :class="cn('flex w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground', props.class)"
     v-bind="$attrs"
   >
     <slot />

@@ -30,10 +30,7 @@ function handleNavigate(path: string) {
         variant="ghost"
         :class="
           cn(
-            `
-              extend-touch-target h-8 touch-manipulation items-center justify-start gap-2.5 p-0! hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0
-              active:bg-transparent dark:hover:bg-transparent
-            `,
+            `extend-touch-target h-8 touch-manipulation items-center justify-start gap-2.5 bg-transparent p-0! hover:bg-transparent focus-visible:ring-0`,
             props.class,
           )
         "
@@ -122,11 +119,11 @@ function handleNavigate(path: string) {
               {{ item.title }}
               <span
                 v-if="item.new"
-                class="size-2 rounded-full border-0 bg-green-600 dark:bg-green-500"
+                class="size-2 rounded-full border-0 bg-green-500"
               />
               <span
                 v-else-if="item.beta"
-                class="size-2 rounded-full border-0 bg-orange-600 dark:bg-orange-500"
+                class="size-2 rounded-full border-0 bg-orange-500"
               />
               <Badge
                 v-if="item.soon"
@@ -174,11 +171,11 @@ function handleNavigate(path: string) {
                   {{ item.title }}
                   <span
                     v-if="item.new"
-                    class="size-2 rounded-full border-0 bg-green-600 dark:bg-green-500"
+                    class="size-2 rounded-full border-0 bg-green-500"
                   />
                   <span
                     v-else-if="item.beta"
-                    class="size-2 rounded-full border-0 bg-orange-600 dark:bg-orange-500"
+                    class="size-2 rounded-full border-0 bg-orange-500"
                   />
                   <Badge
                     v-if="item.soon"

@@ -62,10 +62,7 @@ useMutationObserver(
     ref="itemRef"
     :class="
       cn(
-        `
-          h-9 rounded-md border border-transparent px-3! font-medium data-highlighted:border-input data-highlighted:bg-input/50 data-[selected=true]:border-input
-          data-[selected=true]:bg-input/50
-        `,
+        'h-9 rounded-md border border-transparent px-3! font-medium',
         props.class,
       )
     "
@@ -73,3 +70,11 @@ useMutationObserver(
     <slot />
   </CommandItem>
 </template>
+
+<style scoped>
+:deep([data-slot="command-item"][data-highlighted]),
+[data-slot="command-item"][data-highlighted] {
+  border-color: var(--input);
+  background-color: color-mix(in srgb, var(--input) 50%, transparent);
+}
+</style>
