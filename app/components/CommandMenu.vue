@@ -14,9 +14,26 @@ type Props = {
   navItems?: { href: string; name: string }[];
 };
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   blocks: undefined,
   navItems: undefined,
+});
+
+const docGroups = computed(() => {
+  if (!props.tree?.children) {
+    return [];
+  }
+
+  return props.tree.children
+    .filter(group => group.type === "group" && group.children?.length)
+    .map(group => ({
+      title: group.title,
+      items:
+        group.children?.filter(
+          (i: NavigationItem) => i.type === "page" || i.type === "component",
+        ) ?? [],
+    }))
+    .filter(group => group.items.length > 0);
 });
 
 const router = useRouter();
@@ -37,7 +54,10 @@ const pmToDlxCommand: Record<string, string> = {
 
 const packageManager = config.config.value.packageManager || "pnpm";
 
-function handlePageHighlight(isComponent: boolean, item: { path: string; title?: string }) {
+function handlePageHighlight(
+  isComponent: boolean,
+  item: { path: string; title?: string },
+) {
   if (isComponent) {
     const componentName = item.path.split("/").pop();
     selectedType.value = "component";
@@ -49,7 +69,11 @@ function handlePageHighlight(isComponent: boolean, item: { path: string; title?:
   }
 }
 
-function handleBlockHighlight(block: { name: string; description: string; categories: string[] }) {
+function handleBlockHighlight(block: {
+  name: string;
+  description: string;
+  categories: string[];
+}) {
   selectedType.value = "block";
   copyPayload.value = `${pmToDlxCommand[packageManager]} shadcn-vue@latest add ${block.name}`;
 }
@@ -87,7 +111,12 @@ onMounted(() => {
       e.preventDefault();
       open.value = !open.value;
     }
-    if (e.key === "c" && (e.metaKey || e.ctrlKey) && open.value && copyPayload.value) {
+    if (
+      e.key === "c"
+      && (e.metaKey || e.ctrlKey)
+      && open.value
+      && copyPayload.value
+    ) {
       runCommand(copy);
     }
   };
@@ -97,7 +126,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <Dialog v-model:open="open">
+  <Dialog v-model:open="open" :unmount-on-hide="false">
     <DialogTrigger as-child>
       <Button
         variant="secondary"
@@ -111,7 +140,7 @@ onMounted(() => {
         <span class="inline-flex lg:hidden">Search...</span>
         <div class="absolute top-1.5 right-1.5 hidden gap-1 sm:flex">
           <KbdGroup>
-            <Kbd class="border">{{ isMac ? '⌘' : 'Ctrl' }}</Kbd>
+            <Kbd class="border">{{ isMac ? "⌘" : "Ctrl" }}</Kbd>
             <Kbd class="border">K</Kbd>
           </KbdGroup>
         </div>
@@ -134,7 +163,10 @@ onMounted(() => {
         "
         :filter="filterCommandItem"
       >
-        <CommandInput v-model="searchQuery" placeholder="Search documentation..." />
+        <CommandInput
+          v-model="searchQuery"
+          placeholder="Search documentation..."
+        />
         <CommandList class="no-scrollbar min-h-80 scroll-pt-2 scroll-pb-1.5">
           <CommandEmpty class="py-12 text-center text-sm text-muted-foreground">
             <span v-if="isSearching">Searching...</span>
@@ -154,17 +186,18 @@ onMounted(() => {
               @select="() => runCommand(() => router.push(result.path))"
               @highlight="
                 () => {
-                  selectedType = 'page'
-                  copyPayload = ''
+                  selectedType = 'page';
+                  copyPayload = '';
                 }
               "
             >
               <ChevronRight />
               <div class="flex flex-col">
                 <span class="font-medium">{{ result.title }}</span>
-                <span v-if="result.description" class="text-xs text-muted-foreground">{{
-                  result.description
-                }}</span>
+                <span
+                  v-if="result.description"
+                  class="text-xs text-muted-foreground"
+                >{{ result.description }}</span>
                 <span
                   v-if="result.excerpt"
                   class="mt-1 line-clamp-1 text-xs text-muted-foreground"
@@ -175,7 +208,11 @@ onMounted(() => {
 
           <!-- Navigation Items -->
           <CommandGroup
-            v-if="navItems && navItems.length > 0 && (!searchQuery || searchQuery.length < 2)"
+            v-if="
+              navItems
+                && navItems.length > 0
+                && (!searchQuery || searchQuery.length < 2)
+            "
             heading="Pages"
             class="p-0! **:data-[slot=command-group-heading]:scroll-mt-16 **:data-[slot=command-group-heading]:p-3! **:data-[slot=command-group-heading]:pb-1!"
           >
@@ -186,8 +223,8 @@ onMounted(() => {
               @select="() => runCommand(() => router.push(item.href))"
               @highlight="
                 () => {
-                  selectedType = 'page'
-                  copyPayload = ''
+                  selectedType = 'page';
+                  copyPayload = '';
                 }
               "
             >
@@ -198,30 +235,30 @@ onMounted(() => {
 
           <!-- Documentation Tree -->
           <CommandGroup
-            v-for="group in tree?.children"
+            v-for="group in docGroups"
             :key="group.title"
             :heading="group.title"
             class="p-0! **:data-[slot=command-group-heading]:scroll-mt-16 **:data-[slot=command-group-heading]:p-3! **:data-[slot=command-group-heading]:pb-1!"
           >
-            <template v-if="group.type === 'group'">
-              <CommandItem
-                v-for="item in group.children?.filter(
-                  (i: NavigationItem) => i.type === 'page' || i.type === 'component',
-                )"
-                :key="item.title"
-                :value="item.title?.toString() ? `${group.title} ${item.title}` : ''"
-                :keywords="item.type === 'component' ? ['component'] : undefined"
-                @highlight="() => handlePageHighlight(item.type === 'component', item)"
-                @select="() => runCommand(() => router.push(item.path))"
-              >
-                <div
-                  v-if="item.type === 'component'"
-                  class="aspect-square size-4 rounded-full border border-dashed border-muted-foreground"
-                />
-                <ChevronRight v-else />
-                {{ item.title }}
-              </CommandItem>
-            </template>
+            <CommandItem
+              v-for="item in group.items"
+              :key="item.title"
+              :value="
+                item.title?.toString() ? `${group.title} ${item.title}` : ''
+              "
+              :keywords="item.type === 'component' ? ['component'] : undefined"
+              @highlight="
+                () => handlePageHighlight(item.type === 'component', item)
+              "
+              @select="() => runCommand(() => router.push(item.path))"
+            >
+              <div
+                v-if="item.type === 'component'"
+                class="aspect-square size-4 rounded-full border border-dashed border-muted-foreground"
+              />
+              <ChevronRight v-else />
+              {{ item.title }}
+            </CommandItem>
           </CommandGroup>
 
           <!-- Click to Copy Item -->
@@ -251,10 +288,18 @@ onMounted(() => {
               v-for="block in blocks"
               :key="block.name"
               :value="block.name"
-              :keywords="['block', block.name, block.description, ...block.categories]"
+              :keywords="[
+                'block',
+                block.name,
+                block.description,
+                ...block.categories,
+              ]"
               @highlight="() => handleBlockHighlight(block)"
               @select="
-                () => runCommand(() => router.push(`/blocks/${block.categories[0]}#${block.name}`))
+                () =>
+                  runCommand(() =>
+                    router.push(`/blocks/${block.categories[0]}#${block.name}`),
+                  )
               "
             >
               <Square />
@@ -283,7 +328,7 @@ onMounted(() => {
         </div>
         <Separator v-if="copyPayload" orientation="vertical" class="h-4!" />
         <div v-if="copyPayload" class="flex items-center gap-1">
-          <CommandMenuKbd>{{ isMac ? '⌘' : 'Ctrl' }}</CommandMenuKbd>
+          <CommandMenuKbd>{{ isMac ? "⌘" : "Ctrl" }}</CommandMenuKbd>
           <CommandMenuKbd>C</CommandMenuKbd>
           {{ copyPayload }}
         </div>

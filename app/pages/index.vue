@@ -14,10 +14,9 @@ useSeoMeta({
   twitterCard: "summary_large_image",
 });
 
-defineOgImageComponent("Custom", {
+defineOgImage("Custom", {
   title,
   description,
-  siteName: siteConfig.name,
 });
 </script>
 

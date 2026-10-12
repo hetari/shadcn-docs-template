@@ -64,6 +64,9 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
+    "/": {
+      prerender: true,
+    },
     // Short aliases → real content paths (content lives under section folders)
     "/docs/introduction": {
       redirect: "/docs/getting-started/introduction",
@@ -89,7 +92,6 @@ export default defineNuxtConfig({
   },
 
   ogImage: {
-    fonts: ["Geist:400", "Geist:500", "Geist:600"],
     defaults: {
       width: 1200,
       height: 630,
@@ -182,7 +184,13 @@ export default defineNuxtConfig({
   fonts: {
     defaults: {
       weights: [400, 500, 600, 700],
+      styles: ["normal"],
+      subsets: ["latin"],
     },
+    families: [
+      { name: "Inter", global: true },
+      { name: "Geist", weights: [400, 500, 600], global: true },
+    ],
   },
   content: {
     build: {
