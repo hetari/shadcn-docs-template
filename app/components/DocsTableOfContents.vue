@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { Toc } from "@nuxt/content";
 import type { HTMLAttributes } from "vue";
-import { cn } from "~/lib/utils";
+import { cn } from "cn";
 
 const props = withDefaults(
   defineProps<{

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ChevronRight, Copy, CornerDownLeft, Square } from "@lucide/vue";
+import { cn } from "cn";
 import type { NavigationItem } from "~/lib/navigation";
-import { cn } from "~/lib/utils";
 
 type Props = {
   tree?: {

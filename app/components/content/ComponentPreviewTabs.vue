@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Component, HTMLAttributes } from "vue";
-import { cn } from "@/lib/utils";
+import { cn } from "cn";
 
 const props = withDefaults(
   defineProps<{
@@ -36,7 +36,7 @@ const props = withDefaults(
       <div
         v-if="!hideCode"
         data-slot="code"
-        class="overflow-hidden **:data-pretty-code-figure:m-0! **:data-pretty-code-figure:rounded-t-none **:data-pretty-code-figure:border-t [&_pre]:max-h-100"
+        class="overflow-hidden **:data-docs-code:m-0! **:data-docs-code:rounded-t-none **:data-docs-code:border-t"
       >
         <slot />
         <!-- {{source}} -->

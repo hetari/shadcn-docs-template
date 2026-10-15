@@ -58,8 +58,7 @@ const sortedFiles = files.toSorted((a, b) => {
 </script>
 
 <template>
-  <!-- eslint-disable-next-line better-tailwindcss/no-unknown-classes -->
-  <div class="manual-install">
+  <div id="manual-install">
     <template v-for="file in sortedFiles" :key="file.filename">
       <Step>
         Create <code>{{ file.filename }}</code> and paste the following code:

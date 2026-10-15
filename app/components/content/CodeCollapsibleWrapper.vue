@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
-import { cn } from "@/lib/utils";
+import { cn } from "cn";
 
 const props = defineProps<{
   class?: HTMLAttributes["class"];
@@ -12,7 +12,7 @@ const open = ref(false);
 <template>
   <Collapsible v-model:open="open" :class="cn('group/collapsible relative md:-mx-1', props.class)">
     <CollapsibleTrigger as-child>
-      <div class="absolute top-1.5 right-9 z-10 flex items-center">
+      <div class="absolute top-2 right-14 z-20 flex items-center">
         <Button variant="ghost" size="sm" class="h-7 rounded-md px-2 text-muted-foreground">
           {{ open ? 'Collapse' : 'Expand' }}
         </Button>
@@ -36,11 +36,11 @@ const open = ref(false);
 </template>
 
 <style scoped>
-:deep(> figure) {
+:deep([data-docs-code]) {
   margin-top: 0;
 }
 @media (min-width: 768px) {
-  :deep(> figure) {
+  :deep([data-docs-code]) {
     margin-left: 0 !important;
     margin-right: 0 !important;
   }

@@ -2,8 +2,9 @@
 import type { ListboxItemProps } from "reka-ui";
 import type { HTMLAttributes } from "vue";
 import { reactiveOmit, useMutationObserver } from "@vueuse/core";
+import { cn } from "cn";
 import { useForwardPropsEmits } from "reka-ui";
-import { cn } from "@/lib/utils";
+
 import type { CommandItem } from "./ui/command";
 import { useCommand } from "./ui/command";
 

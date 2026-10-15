@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
 import { Check, Copy } from "@lucide/vue";
-import { cn } from "@/lib/utils";
+import { cn } from "cn";
+
 import type { ButtonVariants } from "./ui/button";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";

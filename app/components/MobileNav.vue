@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
+import { cn } from "cn";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import type { NavigationItem } from "@/lib/navigation";
 import { SIDEBAR_EXCLUDED_PAGES } from "@/lib/navigation";
-import { cn } from "@/lib/utils";
 
 const props = defineProps<{
   class?: HTMLAttributes["class"];

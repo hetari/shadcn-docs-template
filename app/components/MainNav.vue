@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { HTMLAttributes } from "vue";
-import { cn } from "@/lib/utils";
+import { cn } from "cn";
 
 const props = defineProps<{
   items: { href: string; name: string }[];
