@@ -22,6 +22,7 @@
     "@nuxt/content": "^3.16.0",
     "@nuxt/fonts": "0.14.0",
     "@nuxtjs/color-mode": "4.0.0",
+    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/vite": "^4.3.3",
     "@vueuse/core": "^15.0.0",
     "@vueuse/nuxt": "14.2.0",

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-FORCE_VERSION="${INPUT_FORCE_VERSION:-$FORCE_VERSION}"
-DRY_RUN="${INPUT_DRY_RUN:-$DRY_RUN}"
+FORCE_VERSION="${INPUT_FORCE_VERSION:-${FORCE_VERSION:-}}"
+DRY_RUN="${INPUT_DRY_RUN:-${DRY_RUN:-false}}"
 
 echo "=========================================="
 echo " Nuxt Upstream Release Watcher"
@@ -10,7 +10,7 @@ echo "=========================================="
 
 # 1. Read current Nuxt version from package.json
 CURRENT_RAW=$(jq -r '.dependencies.nuxt // ""' package.json)
-CURRENT_VERSION=$(echo "$CURRENT_RAW" | sed -E 's/[^0-9.]//g')
+CURRENT_VERSION=$(echo "$CURRENT_RAW" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n1)
 
 if [ -z "$CURRENT_VERSION" ]; then
   echo "❌ Error: Could not determine current 'nuxt' version in package.json"
@@ -32,10 +32,14 @@ TARGET_VERSION="${TARGET_TAG#v}"
 echo "🎯 Target Nuxt version: v${TARGET_VERSION}"
 
 # 3. Compare current vs target version
+if ! [[ "$TARGET_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  echo "❌ Error: Invalid target version '${TARGET_VERSION}'"
+  exit 1
+fi
 if [ -z "$FORCE_VERSION" ]; then
-  IS_NEWER=$(bun -e '
-    const c = "'"$CURRENT_VERSION"'".split(".").map(Number);
-    const t = "'"$TARGET_VERSION"'".split(".").map(Number);
+  IS_NEWER=$(CUR="$CURRENT_VERSION" TGT="$TARGET_VERSION" bun -e '
+    const c = process.env.CUR.split(".").map(Number);
+    const t = process.env.TGT.split(".").map(Number);
     for (let i = 0; i < Math.max(c.length, t.length); i++) {
       const cv = c[i] || 0;
       const tv = t[i] || 0;
