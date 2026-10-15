@@ -7,7 +7,7 @@ import { join } from "node:path";
 // This avoids reading the filesystem at request time, which fails in serverless.
 function computeDocsVersion(): string {
   try {
-    const contentDir = join(__dirname, "content");
+    const contentDir = join(process.cwd(), "content");
     const files = getAllMdFiles(contentDir);
     const hash = createHash("md5");
     for (const file of files.sort()) {
@@ -87,6 +87,12 @@ export default defineNuxtConfig({
     "/raw/**": {
       headers: {
         "Cache-Control": "public, max-age=3600, s-maxage=3600",
+      },
+    },
+    // Search endpoint caching
+    "/api/search": {
+      cache: {
+        maxAge: 60 * 60 * 24, // 24 hours
       },
     },
   },
@@ -220,6 +226,10 @@ export default defineNuxtConfig({
       failOnError: false,
       autoSubfolderIndex: false,
     },
+  },
+
+  experimental: {
+    routeTypedFetch: true,
   },
   app: {
     head: {
