@@ -52,6 +52,7 @@
   --color-selection: var(--selection);
   --color-selection-foreground: var(--selection-foreground);
 
+  --font-sans: "Inter", sans-serif;
   --font-heading: "Inter", sans-serif;
 }
 
