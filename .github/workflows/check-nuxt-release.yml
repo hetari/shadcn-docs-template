@@ -21,6 +21,9 @@ concurrency:
   group: nuxt-release-watcher
   cancel-in-progress: false
 
+permissions:
+  contents: read
+
 jobs:
   check-nuxt-release:
     runs-on: ubuntu-latest
@@ -30,18 +33,24 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        # Pinned to v4.2.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
+          # PAT_TOKEN is used so that created PRs can trigger other workflows (e.g. CI checks),
+          # as actions triggered by GITHUB_TOKEN do not spawn downstream workflow runs.
+          # Falls back to GITHUB_TOKEN when PAT_TOKEN is not configured.
           token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        # Pinned to v4.2.0
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a
         with:
           node-version-file: .node-version
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+        # Pinned to v2.0.1
+        uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
 
       - name: Check Nuxt release & Create PR
         env:

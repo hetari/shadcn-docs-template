@@ -7,9 +7,18 @@ export default defineEventHandler((event) => {
   // Set cache headers directly in the handler
   event.res.headers.set("Cache-Control", "public, max-age=300, s-maxage=300");
 
-  const version = config.docsVersion && config.docsVersion !== "unknown"
-    ? config.docsVersion
-    : getDocsVersion();
+  let version = config.docsVersion && config.docsVersion !== "unknown"
+    ? (config.docsVersion as string)
+    : undefined;
+
+  if (!version) {
+    try {
+      version = getDocsVersion();
+    }
+    catch {
+      version = "unknown";
+    }
+  }
 
   return {
     version,

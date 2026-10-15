@@ -11,27 +11,31 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   release:
     name: Release & Changelog
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        # Pinned to v4.2.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        # Pinned to v4.2.0
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a
         with:
           node-version-file: .node-version
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+        # Pinned to v2.0.1
+        uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
@@ -44,10 +48,17 @@ jobs:
           echo "count=${CHANGESET_COUNT}" >> "$GITHUB_OUTPUT"
 
       - name: Version and Release
-        if: steps.changesets.outputs.count > 0
+        if: fromJSON(steps.changesets.outputs.count) > 0
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
+          # Guard publishing so it runs only on the main branch
+          CURRENT_REF="${GITHUB_REF:-}"
+          if [ "$CURRENT_REF" != "refs/heads/main" ]; then
+            echo "Skipping release on non-main ref ($CURRENT_REF)"
+            exit 0
+          fi
+
           # 1. Run changeset version to consume changesets and bump package.json / CHANGELOG.md
           bun run changeset version
 
@@ -56,32 +67,29 @@ jobs:
           TAG_NAME="v${NEW_VERSION}"
           echo "🚀 Preparing release for ${TAG_NAME}"
 
-          # 3. Extract release notes for this specific version from CHANGELOG.md
-          bun -e '
-            import fs from "node:fs";
-            const content = fs.readFileSync("CHANGELOG.md", "utf8");
-            const version = "'"${NEW_VERSION}"'".replaceAll(".", "\\.");
-            const regex = new RegExp(`## \\\\b${version}\\\\b[\\\\s\\\\S]*?(?=\\\\n## |$)`);
-            const match = content.match(regex);
-            const notes = match ? match[0].replace(new RegExp(`^## \\\\b${version}\\\\b`), "").trim() : `Release ${version}`;
-            fs.writeFileSync("RELEASE_NOTES.md", notes);
-          '
+          # 3. Extract release notes into $RUNNER_TEMP to keep out of repository commit
+          NOTES_FILE="${RUNNER_TEMP:-/tmp}/RELEASE_NOTES.md"
+          NEW_VERSION="$NEW_VERSION" bun run .github/scripts/extract-release-notes.ts
 
           # 4. Configure Git credentials
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # 5. Commit, tag, and push release
-          git add -A
+          # 5. Commit only versioning changes and changeset artifacts
+          git add package.json CHANGELOG.md .changeset
           git commit -m "chore(release): ${TAG_NAME} [skip ci]"
+
+          # 6. Rebase if main moved, then push commit before creating/pushing tag
+          git pull --rebase origin main
+          git push origin main
+
+          # 7. Create and push tag
           git tag -a "${TAG_NAME}" -m "Release ${TAG_NAME}"
+          git push origin "${TAG_NAME}"
 
-          echo "📤 Pushing release commit and tag to main..."
-          git push origin main --follow-tags
-
-          # 6. Create GitHub Release
+          # 8. Create GitHub Release
           echo "🎉 Publishing GitHub Release for ${TAG_NAME}..."
           gh release create "${TAG_NAME}" \
             --title "${TAG_NAME}" \
-            --notes-file RELEASE_NOTES.md \
+            --notes-file "$NOTES_FILE" \
             --latest

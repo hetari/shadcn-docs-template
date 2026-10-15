@@ -89,12 +89,6 @@ export default defineNuxtConfig({
         "Cache-Control": "public, max-age=3600, s-maxage=3600",
       },
     },
-    // Search endpoint caching
-    "/api/search": {
-      cache: {
-        maxAge: 60 * 60 * 24, // 24 hours
-      },
-    },
   },
 
   ogImage: {
@@ -113,7 +107,7 @@ export default defineNuxtConfig({
         "class-variance-authority",
         "clsx",
         "tailwind-merge",
-        "lucide-vue-next",
+        "@lucide/vue",
         "@vue/devtools-core",
         "@vue/devtools-kit",
         "shiki/langs/astro.mjs",
