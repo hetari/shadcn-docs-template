@@ -51,6 +51,7 @@ export default defineNuxtConfig({
     "nuxt-shiki",
     "@nuxt/fonts",
     "@nuxt/eslint",
+    "@nuxt/image",
   ],
 
   runtimeConfig: {
@@ -91,6 +92,11 @@ export default defineNuxtConfig({
     },
   },
 
+  site: {
+    url: "https://shadcn-docs-template-s6xq92.cranl.net",
+    name: "shadcn-docs-template",
+  },
+
   ogImage: {
     defaults: {
       width: 1200,
@@ -101,15 +107,24 @@ export default defineNuxtConfig({
   css: ["~/assets/css/main.css"],
 
   vite: {
+    build: {
+      chunkSizeWarningLimit: 1024,
+      rolldownOptions: {
+        checks: {
+          bundlerTimings: false,
+          pluginTimings: false,
+        },
+      },
+    },
     optimizeDeps: {
       include: [
-        "reka-ui",
-        "class-variance-authority",
-        "clsx",
-        "tailwind-merge",
         "@lucide/vue",
         "@vue/devtools-core",
         "@vue/devtools-kit",
+        "class-variance-authority",
+        "clsx",
+        "cn",
+        "reka-ui",
         "shiki/langs/astro.mjs",
         "shiki/langs/bash.mjs",
         "shiki/langs/html.mjs",
@@ -128,6 +143,7 @@ export default defineNuxtConfig({
         "shiki/themes/github-light-default.mjs",
         "shiki/themes/min-dark.mjs",
         "shiki/themes/min-light.mjs",
+        "tailwind-merge",
       ],
     },
     plugins: [
@@ -212,6 +228,19 @@ export default defineNuxtConfig({
     devStorage: {
       cache: {
         driver: "memory",
+      },
+    },
+    rollupConfig: {
+      onwarn(warning, rollupWarn) {
+        if (warning.code === "UNUSED_EXTERNAL_IMPORT") {
+          return;
+        }
+        if (
+          !["CIRCULAR_DEPENDENCY", "EVAL"].includes(warning.code || "")
+          && !warning.message?.includes("Unsupported source map comment")
+        ) {
+          rollupWarn(warning);
+        }
       },
     },
     prerender: {

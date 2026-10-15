@@ -12,7 +12,7 @@ export function useHighlightedCode(
 
   watch(() => toValue(language), (lang, _, onCleanup) => {
     // Highlighting runs in the browser. The server renders the plain lines.
-    if (typeof window === "undefined")
+    if (!import.meta.client)
       return;
 
     let cancelled = false;

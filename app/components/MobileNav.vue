@@ -21,6 +21,10 @@ function handleNavigate(path: string) {
   router.push(path);
   open.value = false;
 }
+
+function isChildVisible(child: NavigationItem): boolean {
+  return !child.hide && !SIDEBAR_EXCLUDED_PAGES.includes(child.path);
+}
 </script>
 
 <template>
@@ -154,9 +158,7 @@ function handleNavigate(path: string) {
               </div>
               <div class="flex flex-col gap-3">
                 <NuxtLink
-                  v-for="item in (group.children || []).filter(
-                    child => !child.hide && !SIDEBAR_EXCLUDED_PAGES.includes(child.path),
-                  )"
+                  v-for="item in (group.children || []).filter(isChildVisible)"
                   :key="item.path"
                   prefetch-on="interaction"
                   class="flex items-center gap-2 text-2xl font-medium"

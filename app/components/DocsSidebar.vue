@@ -9,6 +9,10 @@ const props = defineProps<{
 const { path } = toRefs(useRoute());
 
 const { rootPages, folderGroups } = useSidebarSections(() => props.tree);
+
+function isChildVisible(child: NavigationItem): boolean {
+  return !child.hide && !SIDEBAR_EXCLUDED_PAGES.includes(child.path);
+}
 </script>
 
 <template>
@@ -82,10 +86,7 @@ const { rootPages, folderGroups } = useSidebarSections(() => props.tree);
         <SidebarGroupContent>
           <SidebarMenu class="gap-0.5">
             <template
-              v-for="childItem in (group.children || []).filter(
-                (child: NavigationItem) =>
-                  !child.hide && !SIDEBAR_EXCLUDED_PAGES.includes(child.path),
-              )"
+              v-for="childItem in (group.children || []).filter(isChildVisible)"
               :key="childItem.path"
             >
               <SidebarMenuItem>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
 import { cn } from "cn";
+import { CollapsibleContent, CollapsibleRoot, CollapsibleTrigger } from "reka-ui";
 
 const props = defineProps<{
   class?: HTMLAttributes["class"];
@@ -10,7 +11,7 @@ const open = ref(false);
 </script>
 
 <template>
-  <Collapsible v-model:open="open" :class="cn('group/collapsible relative md:-mx-1', props.class)">
+  <CollapsibleRoot v-model:open="open" :class="cn('group/collapsible relative md:-mx-1', props.class)">
     <CollapsibleTrigger as-child>
       <div class="absolute top-2 right-14 z-20 flex items-center">
         <Button variant="ghost" size="sm" class="h-7 rounded-md px-2 text-muted-foreground">
@@ -32,7 +33,7 @@ const open = ref(false);
     >
       {{ open ? 'Collapse' : 'Expand' }}
     </CollapsibleTrigger>
-  </Collapsible>
+  </CollapsibleRoot>
 </template>
 
 <style scoped>
