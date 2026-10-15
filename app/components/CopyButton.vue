@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
-import { Check, Copy } from "lucide-vue-next";
+import { Check, Copy } from "@lucide/vue";
 import { cn } from "@/lib/utils";
 import type { ButtonVariants } from "./ui/button";
 import { Button } from "./ui/button";

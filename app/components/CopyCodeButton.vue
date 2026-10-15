@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
-import { CopyIcon } from "lucide-vue-next";
+import { CopyIcon } from "@lucide/vue";
 import { cn } from "~/lib/utils";
 import type { ButtonVariants } from "./ui/button";
 
@@ -30,7 +30,11 @@ const props = defineProps<{
           Copy and paste the following code into your CSS file.
         </DrawerDescription>
       </DrawerHeader>
-      <slot />
+      <slot>
+        <p class="p-4 text-center text-sm text-muted-foreground">
+          No code to display.
+        </p>
+      </slot>
     </DrawerContent>
   </Drawer>
   <Dialog>
@@ -58,7 +62,11 @@ const props = defineProps<{
           Copy and paste the following code into your CSS file.
         </DialogDescription>
       </DialogHeader>
-      <slot />
+      <slot>
+        <p class="p-4 text-center text-sm text-muted-foreground">
+          No code to display.
+        </p>
+      </slot>
     </DialogContent>
   </Dialog>
 </template>

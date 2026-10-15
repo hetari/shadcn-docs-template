@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronRight, Copy, CornerDownLeft, Square } from "lucide-vue-next";
+import { ChevronRight, Copy, CornerDownLeft, Square } from "@lucide/vue";
 import type { NavigationItem } from "~/lib/navigation";
 import { cn } from "~/lib/utils";
 
@@ -323,7 +323,7 @@ onMounted(() => {
           <CommandMenuKbd>
             <CornerDownLeft />
           </CommandMenuKbd>
-          <span> Go to Page </span>
+          <span>{{ selectedType === 'copy' ? 'Click to Copy' : 'Go to Page' }}</span>
         </div>
         <Separator v-if="copyPayload" orientation="vertical" class="h-4!" />
         <div v-if="copyPayload" class="flex items-center gap-1">

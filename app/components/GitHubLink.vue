@@ -11,11 +11,12 @@ const cached = useLocalStorage<{ count: number; timestamp: number } | null>(
   null,
 );
 
-const { data, error } = await useFetch<{
+const { data, error } = useFetch<{
   stargazers_count: number;
 }>(siteConfig.links.githubAPI, {
   key: "github-stargazers",
   lazy: true,
+  server: false,
   getCachedData(key, nuxtApp) {
     const mem = nuxtApp.payload.data[key] ?? nuxtApp.static.data[key];
     if (mem) {

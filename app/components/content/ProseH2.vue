@@ -14,7 +14,7 @@ const props = defineProps<{
   <h2
     :class="
       cn(
-        'scroll-m-28 font-heading text-xl font-medium tracking-tight lg:mt-16',
+        'scroll-m-28 font-heading text-xl font-medium tracking-tight',
         props.class,
       )
     "
@@ -26,6 +26,11 @@ const props = defineProps<{
 <style scoped>
 h2 {
   margin-top: 2.5rem;
+}
+@media (min-width: 1024px) {
+  h2 {
+    margin-top: 4rem;
+  }
 }
 h2:first-child {
   margin-top: 0;

@@ -8,7 +8,7 @@ import {
   InfoIcon,
   LightbulbIcon,
   NotebookPen,
-} from "lucide-vue-next";
+} from "@lucide/vue";
 import { cn } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 

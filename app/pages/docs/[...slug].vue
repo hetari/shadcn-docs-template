@@ -6,7 +6,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
-} from "lucide-vue-next";
+} from "@lucide/vue";
 import { toDocNeighbour, toDocPageView } from "~/lib/docs";
 
 const route = useRoute();

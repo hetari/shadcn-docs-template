@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { Check, ChevronDown, Copy } from "@lucide/vue";
 import { isClient, useClipboard } from "@vueuse/core";
-import { Check, ChevronDown, Copy } from "lucide-vue-next";
 
 defineProps<{
   rawbody: string;
