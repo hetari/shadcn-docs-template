@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { cn } from "~/lib/utils";
+import { cn } from "cn";
 
 const { level = 3 } = defineProps<{
   level?: 1 | 2 | 3 | 4 | 5 | 6;
@@ -19,7 +19,6 @@ const levelClass = {
   <div
     :class="
       cn(
-        // eslint-disable-next-line better-tailwindcss/no-unknown-classes
         'steps',
         levelClass[level],
       )

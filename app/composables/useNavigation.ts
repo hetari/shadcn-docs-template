@@ -28,8 +28,11 @@ function mapWithType(
   item: ContentNavigationItem,
   parent: ContentNavigationItem | null,
 ): NavigationItem {
+  const isLeaf = !item.children || item.children.length === 0;
+  const customTitle = (item.navigation as { title?: string } | undefined)?.title;
   return {
     ...item,
+    title: isLeaf && customTitle ? customTitle : item.title,
     type: navigationItemType(item, parent),
     children: item.children?.map(child => mapWithType(child, item)),
   };

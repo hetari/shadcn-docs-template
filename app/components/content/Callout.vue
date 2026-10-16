@@ -8,8 +8,9 @@ import {
   InfoIcon,
   LightbulbIcon,
   NotebookPen,
-} from "lucide-vue-next";
-import { cn } from "@/lib/utils";
+} from "@lucide/vue";
+import { cn } from "cn";
+
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 
 type CalloutType = keyof typeof typeMap;

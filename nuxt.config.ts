@@ -7,7 +7,7 @@ import { join } from "node:path";
 // This avoids reading the filesystem at request time, which fails in serverless.
 function computeDocsVersion(): string {
   try {
-    const contentDir = join(__dirname, "content");
+    const contentDir = join(process.cwd(), "content");
     const files = getAllMdFiles(contentDir);
     const hash = createHash("md5");
     for (const file of files.sort()) {
@@ -51,6 +51,7 @@ export default defineNuxtConfig({
     "nuxt-shiki",
     "@nuxt/fonts",
     "@nuxt/eslint",
+    "@nuxt/image",
   ],
 
   runtimeConfig: {
@@ -64,6 +65,9 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
+    "/": {
+      prerender: true,
+    },
     // Short aliases → real content paths (content lives under section folders)
     "/docs/introduction": {
       redirect: "/docs/getting-started/introduction",
@@ -88,8 +92,12 @@ export default defineNuxtConfig({
     },
   },
 
+  site: {
+    url: "https://shadcn-docs-template-s6xq92.cranl.net",
+    name: "shadcn-docs-template",
+  },
+
   ogImage: {
-    fonts: ["Geist:400", "Geist:500", "Geist:600"],
     defaults: {
       width: 1200,
       height: 630,
@@ -99,15 +107,24 @@ export default defineNuxtConfig({
   css: ["~/assets/css/main.css"],
 
   vite: {
+    build: {
+      chunkSizeWarningLimit: 1024,
+      rolldownOptions: {
+        checks: {
+          bundlerTimings: false,
+          pluginTimings: false,
+        },
+      },
+    },
     optimizeDeps: {
       include: [
-        "reka-ui",
-        "class-variance-authority",
-        "clsx",
-        "tailwind-merge",
-        "lucide-vue-next",
+        "@lucide/vue",
         "@vue/devtools-core",
         "@vue/devtools-kit",
+        "class-variance-authority",
+        "clsx",
+        "cn",
+        "reka-ui",
         "shiki/langs/astro.mjs",
         "shiki/langs/bash.mjs",
         "shiki/langs/html.mjs",
@@ -126,6 +143,7 @@ export default defineNuxtConfig({
         "shiki/themes/github-light-default.mjs",
         "shiki/themes/min-dark.mjs",
         "shiki/themes/min-light.mjs",
+        "tailwind-merge",
       ],
     },
     plugins: [
@@ -182,7 +200,13 @@ export default defineNuxtConfig({
   fonts: {
     defaults: {
       weights: [400, 500, 600, 700],
+      styles: ["normal"],
+      subsets: ["latin"],
     },
+    families: [
+      { name: "Inter", global: true },
+      { name: "Geist", weights: [400, 500, 600], global: true },
+    ],
   },
   content: {
     build: {
@@ -206,12 +230,29 @@ export default defineNuxtConfig({
         driver: "memory",
       },
     },
+    rollupConfig: {
+      onwarn(warning, rollupWarn) {
+        if (warning.code === "UNUSED_EXTERNAL_IMPORT") {
+          return;
+        }
+        if (
+          !["CIRCULAR_DEPENDENCY", "EVAL"].includes(warning.code || "")
+          && !warning.message?.includes("Unsupported source map comment")
+        ) {
+          rollupWarn(warning);
+        }
+      },
+    },
     prerender: {
       crawlLinks: true,
       routes: ["/"],
       failOnError: false,
       autoSubfolderIndex: false,
     },
+  },
+
+  experimental: {
+    routeTypedFetch: true,
   },
   app: {
     head: {

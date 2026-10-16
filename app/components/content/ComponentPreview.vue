@@ -11,7 +11,7 @@ const props = defineProps<{
 
 // Map all demo and ui components
 const demos = import.meta.glob("../demo/**/*.vue");
-const ui = import.meta.glob("../ui/**/*.vue");
+const ui = import.meta.glob(["../ui/*/*.vue", "../ui/*.vue"]);
 
 function getLoader() {
   const nameL = props.name.toLowerCase();

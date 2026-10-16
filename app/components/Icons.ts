@@ -1,10 +1,10 @@
-import type { VNode } from "vue";
-import { FileIcon } from "lucide-vue-next";
+import type { HTMLAttributes, StyleValue, VNode } from "vue";
+import { FileIcon } from "@lucide/vue";
 import { defineComponent, h } from "vue";
 
 type IconProps = {
-  class?: string;
-  style?: Record<string, any>;
+  class?: HTMLAttributes["class"];
+  style?: StyleValue;
   [key: string]: any;
 };
 

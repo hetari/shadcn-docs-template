@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { Check, ChevronDown, Copy } from "@lucide/vue";
 import { isClient, useClipboard } from "@vueuse/core";
-import { Check, ChevronDown, Copy } from "lucide-vue-next";
 
 defineProps<{
   rawbody: string;
@@ -127,13 +127,13 @@ const { copy, copied } = useClipboard();
 <template>
   <Popover>
     <div
-      class="group/buttons relative flex rounded-lg bg-secondary *:data-[slot=button]:focus-visible:relative *:data-[slot=button]:focus-visible:z-10"
+      class="group/buttons relative flex rounded-lg bg-secondary"
     >
       <PopoverAnchor />
       <Button
         variant="secondary"
         size="sm"
-        class="h-8 shadow-none md:h-7 md:text-[0.8rem]"
+        class="h-8 shadow-none focus-visible:relative focus-visible:z-10 md:h-7 md:text-[0.8rem]"
         @click="copy(rawbody)"
       >
         <Check v-if="copied" /> <Copy v-else />
@@ -144,7 +144,7 @@ const { copy, copied } = useClipboard();
           <Button
             variant="secondary"
             size="sm"
-            class="peer -ml-0.5 size-8 shadow-none md:size-7 md:text-[0.8rem]"
+            class="peer -ml-0.5 size-8 shadow-none focus-visible:relative focus-visible:z-10 md:size-7 md:text-[0.8rem]"
           >
             <ChevronDown class="rotate-180 sm:rotate-0" />
             <span class="sr-only">menu button</span>
@@ -164,13 +164,13 @@ const { copy, copied } = useClipboard();
         <Button
           variant="secondary"
           size="sm"
-          class="peer -ml-0.5 size-8 shadow-none md:size-7 md:text-[0.8rem]"
+          class="peer -ml-0.5 size-8 shadow-none focus-visible:relative focus-visible:z-10 md:size-7 md:text-[0.8rem]"
         >
           <ChevronDown class="rotate-180 sm:rotate-0" />
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        class="w-52 origin-center! rounded-lg bg-background/70 p-1 shadow-sm backdrop-blur-sm dark:bg-background/60"
+        class="w-52 origin-center! rounded-lg bg-background/70 p-1 shadow-sm backdrop-blur-sm"
         align="start"
       >
         <Button

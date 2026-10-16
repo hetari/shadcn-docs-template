@@ -1,0 +1,95 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Release & Changelog
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        # Pinned to v4.2.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Node
+        # Pinned to v4.2.0
+        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a
+        with:
+          node-version-file: .node-version
+
+      - name: Setup Bun
+        # Pinned to v2.0.1
+        uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Check for pending changesets
+        id: changesets
+        run: |
+          CHANGESET_COUNT=$(find .changeset -maxdepth 1 -name "*.md" ! -name "README.md" | wc -l)
+          echo "Found ${CHANGESET_COUNT} changeset(s)"
+          echo "count=${CHANGESET_COUNT}" >> "$GITHUB_OUTPUT"
+
+      - name: Version and Release
+        if: fromJSON(steps.changesets.outputs.count) > 0
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          # Guard publishing so it runs only on the main branch
+          CURRENT_REF="${GITHUB_REF:-}"
+          if [ "$CURRENT_REF" != "refs/heads/main" ]; then
+            echo "Skipping release on non-main ref ($CURRENT_REF)"
+            exit 0
+          fi
+
+          # 1. Run changeset version to consume changesets and bump package.json / CHANGELOG.md
+          bun run changeset version
+
+          # 2. Extract new version from package.json
+          NEW_VERSION=$(jq -r .version package.json)
+          TAG_NAME="v${NEW_VERSION}"
+          echo "🚀 Preparing release for ${TAG_NAME}"
+
+          # 3. Extract release notes into $RUNNER_TEMP to keep out of repository commit
+          NOTES_FILE="${RUNNER_TEMP:-/tmp}/RELEASE_NOTES.md"
+          NEW_VERSION="$NEW_VERSION" bun run .github/scripts/extract-release-notes.ts
+
+          # 4. Configure Git credentials
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # 5. Commit only versioning changes and changeset artifacts
+          git add package.json CHANGELOG.md .changeset
+          git commit -m "chore(release): ${TAG_NAME} [skip ci]"
+
+          # 6. Rebase if main moved, then push commit before creating/pushing tag
+          git pull --rebase origin main
+          git push origin main
+
+          # 7. Create and push tag
+          git tag -a "${TAG_NAME}" -m "Release ${TAG_NAME}"
+          git push origin "${TAG_NAME}"
+
+          # 8. Create GitHub Release
+          echo "🎉 Publishing GitHub Release for ${TAG_NAME}..."
+          gh release create "${TAG_NAME}" \
+            --title "${TAG_NAME}" \
+            --notes-file "$NOTES_FILE" \
+            --latest

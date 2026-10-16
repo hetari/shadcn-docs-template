@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
+import { cn } from "cn";
 import { TabsContent } from "@/components/ui/tabs";
-import { cn } from "~/lib/utils";
 
 const props = defineProps<{
   value: string;
@@ -14,7 +14,7 @@ const props = defineProps<{
     :value="props.value"
     :class="
       cn(
-        'relative [&_h3.font-heading]:text-base [&_h3.font-heading]:font-medium *:[figure]:first:mt-0 [&>.steps]:mt-6',
+        'relative [&_h3.font-heading]:text-base [&_h3.font-heading]:font-medium',
         props.class,
       )
     "
@@ -22,3 +22,12 @@ const props = defineProps<{
     <slot />
   </TabsContent>
 </template>
+
+<style scoped>
+:deep(> figure:first-child) {
+  margin-top: 0;
+}
+:deep(> .steps) {
+  margin-top: 1.5rem;
+}
+</style>

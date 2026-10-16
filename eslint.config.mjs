@@ -22,6 +22,22 @@ export default withNuxt(
       tailwindcss.configs.recommended,
       {
         rules: {
+          // ─── FIXED TAILWIND RULE (STRINGS ONLY) ───────────────────────────
+          "better-tailwindcss/no-unknown-classes": [
+            "error",
+            {
+              ignore: [
+                "not-prose",
+                "scroll-fade-x",
+                "^data-wrap:",
+                "^group-",
+                "^scrollbar-",
+                "steps",
+                "toaster",
+              ],
+            },
+          ],
+          // ──────────────────────────────────────────────────────────────────
           "vue/block-order": [
             "error",
             { order: ["script", "template", "style"] },

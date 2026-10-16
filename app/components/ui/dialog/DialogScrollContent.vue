@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { DialogContentEmits, DialogContentProps } from "reka-ui";
 import type { HTMLAttributes } from "vue";
+import { X } from "@lucide/vue";
 import { reactiveOmit } from "@vueuse/core";
-import { X } from "lucide-vue-next";
+import { cn } from "cn";
 import {
   DialogClose,
   DialogContent,
@@ -10,7 +11,6 @@ import {
   DialogPortal,
   useForwardPropsEmits,
 } from "reka-ui";
-import { cn } from "@/lib/utils";
 
 defineOptions({
   inheritAttrs: false,

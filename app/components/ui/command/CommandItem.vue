@@ -2,9 +2,9 @@
 import type { ListboxItemEmits, ListboxItemProps } from "reka-ui";
 import type { HTMLAttributes } from "vue";
 import { reactiveOmit, useCurrentElement } from "@vueuse/core";
+import { cn } from "cn";
 import { ListboxItem, useForwardPropsEmits, useId } from "reka-ui";
 import { computed, onMounted, onUnmounted, ref } from "vue";
-import { cn } from "@/lib/utils";
 import { useCommand, useCommandGroup } from ".";
 
 const props = defineProps<ListboxItemProps & { class?: HTMLAttributes["class"] }>();
@@ -68,8 +68,8 @@ onUnmounted(() => {
     data-slot="command-item"
     :class="cn(`
       relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50
-      data-highlighted:bg-accent data-highlighted:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\'size-\'])]:size-4
-      [&_svg:not([class*=\'text-\'])]:text-muted-foreground
+      data-highlighted:bg-accent data-highlighted:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4
+      [&_svg:not([class*='text-'])]:text-muted-foreground
     `, props.class)"
     @select="() => {
       filterState.search = ''

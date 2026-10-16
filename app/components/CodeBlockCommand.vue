@@ -1,8 +1,21 @@
 <script setup lang="ts">
-import { TerminalIcon } from "lucide-vue-next";
+import type { HTMLAttributes } from "vue";
+import { TerminalIcon } from "@lucide/vue";
+import { cn } from "cn";
+import {
+  CodeBlock,
+  CodeBlockActions,
+  CodeBlockContent,
+  CodeBlockCopyButton,
+  CodeBlockHeader,
+  CodeBlockLine,
+  CodeBlockToken,
+  useHighlightedCode,
+} from "@/components/ui/code-block";
 
 const props = defineProps<{
   code: string;
+  class?: HTMLAttributes["class"];
 }>();
 
 const tabs = computed(() => {
@@ -43,46 +56,45 @@ const tabs = computed(() => {
 });
 
 const { config } = useConfig();
+
+const activeCommand = computed(
+  () => tabs.value[config.value.packageManager as keyof typeof tabs.value] ?? props.code,
+);
+
+const lines = useHighlightedCode(() => activeCommand.value, "bash");
 </script>
 
 <template>
-  <div class="overflow-x-auto">
-    <Tabs v-model="config.packageManager" class="gap-0">
-      <div class="flex items-center gap-2 border-b border-border/50 px-3 py-1">
-        <div class="flex size-4 items-center justify-center rounded-[1px] bg-foreground opacity-70">
-          <TerminalIcon class="size-3 text-code" />
+  <CodeBlock
+    data-docs-code :class="cn(
+      'not-prose -mx-1 my-6 md:-mx-1', props.class)"
+  >
+    <CodeBlockHeader class="gap-0 border-b border-border/50 px-0 pt-0">
+      <div class="flex min-w-0 flex-1 items-center gap-2 px-3 py-1">
+        <div class="flex size-4 shrink-0 items-center justify-center rounded-[1px] bg-foreground opacity-70">
+          <TerminalIcon class="size-3 text-background" />
         </div>
-        <TabsList class="rounded-none bg-transparent p-0">
-          <TabsTrigger
-            v-for="key in Object.keys(tabs)"
-            :key="key"
-            :value="key"
-            class="h-7 border border-transparent pt-1.5 data-[state=active]:border-input data-[state=active]:bg-accent data-[state=active]:shadow-none"
-          >
-            {{ key }}
-          </TabsTrigger>
-        </TabsList>
+        <Tabs v-model="config.packageManager" class="min-w-0 flex-1 gap-0">
+          <TabsList class="h-auto rounded-none bg-transparent p-0">
+            <TabsTrigger
+              v-for="key in Object.keys(tabs)"
+              :key="key"
+              :value="key"
+              class="h-7 pt-1.5 data-[state=active]:border-input data-[state=active]:bg-accent data-[state=active]:shadow-none"
+            >
+              {{ key }}
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
-
-      <div class="no-scrollbar overflow-x-auto">
-        <TabsContent
-          v-for="[key, value] in Object.entries(tabs)"
-          :key="key"
-          :value="key"
-          class="mt-0 px-4 py-3.5"
-        >
-          <!-- eslint-disable better-tailwindcss/no-unknown-classes -->
-          <pre
-            class="language-bash shiki shiki-themes github-light-default github-dark"
-          ><code class="relative font-mono text-sm leading-none"><span class="line"><span>{{ value }}</span></span></code></pre>
-          <!-- eslint-enable better-tailwindcss/no-unknown-classes -->
-        </TabsContent>
-      </div>
-    </Tabs>
-
-    <CopyButton
-      class="absolute top-2 right-2 z-10 size-7 opacity-70 hover:opacity-100 focus-visible:opacity-100"
-      :value="tabs[config.packageManager]"
-    />
-  </div>
+      <CodeBlockActions class="static! me-2 opacity-100!">
+        <CodeBlockCopyButton :value="activeCommand" />
+      </CodeBlockActions>
+    </CodeBlockHeader>
+    <CodeBlockContent class="mt-0">
+      <CodeBlockLine v-for="(line, index) in lines" :key="index">
+        <CodeBlockToken v-for="(token, i) in line" :key="i" :token="token" />
+      </CodeBlockLine>
+    </CodeBlockContent>
+  </CodeBlock>
 </template>

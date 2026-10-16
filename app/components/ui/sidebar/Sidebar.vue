@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { cn } from "cn";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import SheetDescription from "@/components/ui/sheet/SheetDescription.vue";
 import SheetHeader from "@/components/ui/sheet/SheetHeader.vue";
 import SheetTitle from "@/components/ui/sheet/SheetTitle.vue";
-import { cn } from "@/lib/utils";
 import type { SidebarProps } from ".";
 import { SIDEBAR_WIDTH_MOBILE, useSidebar } from "./utils";
 
@@ -24,7 +24,7 @@ const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
   <div
     v-if="collapsible === 'none'"
     data-slot="sidebar"
-    :class="cn('flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground', props.class)"
+    :class="cn('flex w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground', props.class)"
     v-bind="$attrs"
   >
     <slot />

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
+import { cn } from "cn";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import type { NavigationItem } from "@/lib/navigation";
 import { SIDEBAR_EXCLUDED_PAGES } from "@/lib/navigation";
-import { cn } from "@/lib/utils";
 
 const props = defineProps<{
   class?: HTMLAttributes["class"];
@@ -15,11 +15,15 @@ const props = defineProps<{
 const router = useRouter();
 const open = ref(false);
 
-const { rootPages, folderGroups } = useSidebarSections(() => props.tree?.[0]);
+const { sectionsLabel, rootPages, folderGroups } = useSidebarSections(() => props.tree?.[0]);
 
 function handleNavigate(path: string) {
   router.push(path);
   open.value = false;
+}
+
+function isChildVisible(child: NavigationItem): boolean {
+  return !child.hide && !SIDEBAR_EXCLUDED_PAGES.includes(child.path);
 }
 </script>
 
@@ -30,10 +34,7 @@ function handleNavigate(path: string) {
         variant="ghost"
         :class="
           cn(
-            `
-              extend-touch-target h-8 touch-manipulation items-center justify-start gap-2.5 p-0! hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0
-              active:bg-transparent dark:hover:bg-transparent
-            `,
+            `extend-touch-target h-8 touch-manipulation items-center justify-start gap-2.5 bg-transparent p-0! hover:bg-transparent focus-visible:ring-0`,
             props.class,
           )
         "
@@ -100,10 +101,10 @@ function handleNavigate(path: string) {
           </div>
         </div>
 
-        <!-- Sections (Root Pages) -->
+        <!-- Pinned Sections / Quick Links -->
         <div v-if="rootPages.length" class="flex flex-col gap-4">
           <div class="text-sm font-medium text-muted-foreground">
-            Sections
+            {{ sectionsLabel }}
           </div>
           <div class="flex flex-col gap-3">
             <NuxtLink
@@ -122,11 +123,11 @@ function handleNavigate(path: string) {
               {{ item.title }}
               <span
                 v-if="item.new"
-                class="size-2 rounded-full border-0 bg-green-600 dark:bg-green-500"
+                class="size-2 rounded-full border-0 bg-green-500"
               />
               <span
                 v-else-if="item.beta"
-                class="size-2 rounded-full border-0 bg-orange-600 dark:bg-orange-500"
+                class="size-2 rounded-full border-0 bg-orange-500"
               />
               <Badge
                 v-if="item.soon"
@@ -157,9 +158,7 @@ function handleNavigate(path: string) {
               </div>
               <div class="flex flex-col gap-3">
                 <NuxtLink
-                  v-for="item in (group.children || []).filter(
-                    child => !child.hide && !SIDEBAR_EXCLUDED_PAGES.includes(child.path),
-                  )"
+                  v-for="item in (group.children || []).filter(isChildVisible)"
                   :key="item.path"
                   prefetch-on="interaction"
                   class="flex items-center gap-2 text-2xl font-medium"
@@ -174,11 +173,11 @@ function handleNavigate(path: string) {
                   {{ item.title }}
                   <span
                     v-if="item.new"
-                    class="size-2 rounded-full border-0 bg-green-600 dark:bg-green-500"
+                    class="size-2 rounded-full border-0 bg-green-500"
                   />
                   <span
                     v-else-if="item.beta"
-                    class="size-2 rounded-full border-0 bg-orange-600 dark:bg-orange-500"
+                    class="size-2 rounded-full border-0 bg-orange-500"
                   />
                   <Badge
                     v-if="item.soon"

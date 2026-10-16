@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
+import { cn } from "cn";
 import { TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "~/lib/utils";
 
 const props = defineProps<{
   value: string;
@@ -15,9 +15,8 @@ const props = defineProps<{
     :class="
       cn(
         `
-          rounded-none border-0 border-b-2 border-transparent px-1 text-xs text-muted-foreground hover:text-primary data-[state=active]:border-primary
-          data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none dark:data-[state=active]:border-primary
-          dark:data-[state=active]:bg-transparent
+          rounded-none border-0 border-b-2 border-transparent px-1 text-xs text-muted-foreground hover:text-primary data-[state=active]:bg-transparent
+          data-[state=active]:shadow-none
         `,
         props.class,
       )
@@ -26,3 +25,11 @@ const props = defineProps<{
     <slot />
   </TabsTrigger>
 </template>
+
+<style scoped>
+:deep([data-slot="tabs-trigger"][data-state="active"]),
+[data-slot="tabs-trigger"][data-state="active"] {
+  border-bottom-color: var(--primary);
+  color: var(--foreground);
+}
+</style>

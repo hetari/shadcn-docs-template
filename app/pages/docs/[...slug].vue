@@ -6,7 +6,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
-} from "lucide-vue-next";
+} from "@lucide/vue";
 import { toDocNeighbour, toDocPageView } from "~/lib/docs";
 
 const route = useRoute();
@@ -20,10 +20,13 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: "Page not found" });
 }
 
-const { data: neighbours } = await useAsyncData(`surround-${route.path}`, async () => {
-  const items = await queryCollectionItemSurroundings("content", route.path);
-  return items.map(item => item ? toDocNeighbour(item) : null);
-});
+const { data: neighbours } = await useAsyncData(
+  `surround-${route.path}`,
+  async () => {
+    const items = await queryCollectionItemSurroundings("content", route.path);
+    return items.map(item => (item ? toDocNeighbour(item) : null));
+  },
+);
 
 useSeoMeta({
   title: page.value.title,
@@ -32,7 +35,7 @@ useSeoMeta({
   ogDescription: page.value.description,
 });
 
-defineOgImageComponent("Custom", {
+defineOgImage("Custom", {
   title: page.value.title,
   description: page.value.description,
 });
@@ -40,11 +43,14 @@ defineOgImageComponent("Custom", {
 
 <template>
   <div v-if="page" class="h-full">
-    <div data-slot="docs" class="flex h-full items-stretch text-[1.05rem] sm:text-[15px] xl:w-full">
+    <div
+      data-slot="docs"
+      class="flex h-full items-stretch text-[1.05rem] sm:text-[15px] xl:w-full"
+    >
       <div class="flex h-auto min-w-0 flex-1 flex-col">
         <div class="h-(--top-spacing) shrink-0" />
         <div
-          class="mx-auto flex w-full max-w-2xl min-w-0 flex-1 flex-col gap-8 px-4 py-6 text-neutral-800 md:px-0 lg:py-8 dark:text-neutral-300"
+          class="mx-auto flex w-full max-w-2xl min-w-0 flex-1 flex-col gap-8 px-4 py-6 text-foreground md:px-0 lg:py-8"
         >
           <div class="flex flex-col gap-2">
             <div class="flex flex-col gap-2">
@@ -75,7 +81,10 @@ defineOgImageComponent("Custom", {
                     class="extend-touch-target ms-auto size-8 shadow-none md:size-7"
                     as-child
                   >
-                    <NuxtLink :to="neighbours[0].path" prefetch-on="interaction">
+                    <NuxtLink
+                      :to="neighbours[0].path"
+                      prefetch-on="interaction"
+                    >
                       <ArrowLeft />
                       <span class="sr-only">Previous</span>
                     </NuxtLink>
@@ -87,7 +96,10 @@ defineOgImageComponent("Custom", {
                     class="extend-touch-target size-8 shadow-none md:size-7"
                     as-child
                   >
-                    <NuxtLink :to="neighbours[1].path" prefetch-on="interaction">
+                    <NuxtLink
+                      :to="neighbours[1].path"
+                      prefetch-on="interaction"
+                    >
                       <span class="sr-only">Next</span>
                       <ArrowRight />
                     </NuxtLink>
@@ -125,7 +137,10 @@ defineOgImageComponent("Custom", {
             </div>
           </div>
 
-          <ContentRenderer :value="page.source" class="w-full flex-1 *:data-[slot=alert]:first:mt-0" />
+          <ContentRenderer
+            :value="page.source"
+            class="w-full flex-1 *:data-[slot=alert]:first:mt-0"
+          />
 
           <p
             v-if="page.lastUpdated"
@@ -134,16 +149,25 @@ defineOgImageComponent("Custom", {
             <Clock class="size-3.5" />
             Last updated on
             {{
-              new Date(page.lastUpdated).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
+              new Date(page.lastUpdated).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                timeZone: "UTC",
               })
             }}
           </p>
         </div>
-        <div class="mx-auto flex h-16 w-full max-w-2xl items-center gap-2 px-4 md:px-0">
-          <Button v-if="neighbours?.[0]" variant="secondary" size="sm" as-child class="shadow-none">
+        <div
+          class="mx-auto flex h-16 w-full max-w-2xl items-center gap-2 px-4 md:px-0"
+        >
+          <Button
+            v-if="neighbours?.[0]"
+            variant="secondary"
+            size="sm"
+            as-child
+            class="shadow-none"
+          >
             <NuxtLink prefetch-on="interaction" :to="neighbours[0].path">
               <ChevronLeft /> {{ neighbours[0].title }}
             </NuxtLink>
@@ -168,7 +192,10 @@ defineOgImageComponent("Custom", {
         "
       >
         <div class="h-(--top-spacing) shrink-0" />
-        <div v-if="page.toc?.links.length" class="no-scrollbar overflow-y-auto px-8">
+        <div
+          v-if="page.toc?.links.length"
+          class="no-scrollbar overflow-y-auto px-8"
+        >
           <DocsTableOfContents :toc="page.toc" />
           <div class="h-12" />
         </div>

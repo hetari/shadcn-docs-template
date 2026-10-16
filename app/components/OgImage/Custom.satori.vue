@@ -10,10 +10,22 @@ defineProps({
     class="flex size-full bg-black text-white"
     :style="{ fontFamily: 'Geist' }"
   >
-    <div class="absolute inset-y-0 left-16 flex w-px border border-dashed border-stone-700" />
-    <div class="absolute inset-y-0 right-16 flex w-px border border-dashed border-stone-700" />
-    <div class="absolute inset-x-0 top-16 flex h-px border border-stone-700" />
-    <div class="absolute inset-x-0 bottom-16 flex h-px border border-stone-700" />
+    <div
+      class="absolute inset-y-0 left-16 flex w-px"
+      :style="{ borderLeft: '1px dashed #44403c' }"
+    />
+    <div
+      class="absolute inset-y-0 right-16 flex w-px"
+      :style="{ borderLeft: '1px dashed #44403c' }"
+    />
+    <div
+      class="absolute inset-x-0 top-16 flex h-px"
+      :style="{ borderTop: '1px solid #44403c' }"
+    />
+    <div
+      class="absolute inset-x-0 bottom-16 flex h-px"
+      :style="{ borderTop: '1px solid #44403c' }"
+    />
     <div class="absolute right-24 bottom-24 flex flex-row text-white">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -47,7 +59,7 @@ defineProps({
         />
       </svg>
     </div>
-    <div class="absolute inset-32 flex w-[896px] flex-col justify-center">
+    <div class="absolute inset-32 flex w-4xl flex-col justify-center">
       <div
         class="flex grow flex-col justify-center leading-[1.1] tracking-tight"
         :style="{

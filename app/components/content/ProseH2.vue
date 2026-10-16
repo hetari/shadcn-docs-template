@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
-import { cn } from "~/lib/utils";
+import { cn } from "cn";
 
 const props = defineProps<{
   class?: HTMLAttributes["class"];
@@ -8,16 +8,13 @@ const props = defineProps<{
 
 // The classes below add spacing between elements when they are used together. For example, when a
 // ProseH2 is followed by a ProseP, the ProseP gets mt-4. When followed by ProseSteps, it gets mt-0.
-
-const siblingSpacingClass = "[&+]*:[code]:text-xl";
 </script>
 
 <template>
   <h2
     :class="
       cn(
-        'mt-10 scroll-m-28 font-heading text-xl font-medium tracking-tight first:mt-0 lg:mt-16 [&+.steps]:mt-0! [&+.steps>h3]:mt-4! [&+h3]:mt-6! [&+p]:mt-4!',
-        siblingSpacingClass,
+        'scroll-m-28 font-heading text-xl font-medium tracking-tight',
         props.class,
       )
     "
@@ -25,3 +22,29 @@ const siblingSpacingClass = "[&+]*:[code]:text-xl";
     <slot />
   </h2>
 </template>
+
+<style scoped>
+h2 {
+  margin-top: 2.5rem;
+}
+@media (min-width: 1024px) {
+  h2 {
+    margin-top: 4rem;
+  }
+}
+h2:first-child {
+  margin-top: 0;
+}
+:deep(+ .steps) {
+  margin-top: 0 !important;
+}
+:deep(+ .steps > h3) {
+  margin-top: 1rem !important;
+}
+:deep(+ h3) {
+  margin-top: 1.5rem !important;
+}
+:deep(+ p) {
+  margin-top: 1rem !important;
+}
+</style>

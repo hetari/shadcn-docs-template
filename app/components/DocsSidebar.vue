@@ -8,7 +8,11 @@ const props = defineProps<{
 
 const { path } = toRefs(useRoute());
 
-const { rootPages, folderGroups } = useSidebarSections(() => props.tree);
+const { sectionsLabel, rootPages, folderGroups } = useSidebarSections(() => props.tree);
+
+function isChildVisible(child: NavigationItem): boolean {
+  return !child.hide && !SIDEBAR_EXCLUDED_PAGES.includes(child.path);
+}
 </script>
 
 <template>
@@ -21,10 +25,10 @@ const { rootPages, folderGroups } = useSidebarSections(() => props.tree);
         class="sticky -top-1 z-10 h-8 shrink-0 bg-linear-to-b from-background via-background/80 to-background/50 blur-xs"
       />
 
-      <!-- Sections (Root Pages natively ordered by Nuxt Content) -->
+      <!-- Pinned Sections / Quick Links -->
       <SidebarGroup v-if="rootPages.length > 0">
         <SidebarGroupLabel class="font-medium text-muted-foreground">
-          Sections
+          {{ sectionsLabel }}
         </SidebarGroupLabel>
         <SidebarGroupContent>
           <SidebarMenu>
@@ -34,7 +38,7 @@ const { rootPages, folderGroups } = useSidebarSections(() => props.tree);
                 :is-active="item.path === path"
                 class="
                   relative h-7.5 w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0
-                  after:rounded-md data-[active=true]:border-accent data-[active=true]:bg-accent 3xl:fixed:w-full 3xl:fixed:max-w-48
+                  after:rounded-md data-[active=true]:bg-accent 3xl:fixed:w-full 3xl:fixed:max-w-48
                 "
               >
                 <NuxtLink :to="item.path" prefetch-on="interaction">
@@ -47,11 +51,11 @@ const { rootPages, folderGroups } = useSidebarSections(() => props.tree);
                   {{ item.title }}
                   <span
                     v-if="item.new"
-                    class="size-2 items-center gap-1 rounded-md border-0 bg-green-600 dark:bg-green-500"
+                    class="size-2 items-center gap-1 rounded-md border-0 bg-green-500"
                   />
                   <span
                     v-else-if="item.beta"
-                    class="size-2 items-center gap-1 rounded-md border-0 bg-orange-600 dark:bg-orange-500"
+                    class="size-2 items-center gap-1 rounded-md border-0 bg-orange-500"
                   />
                   <Badge
                     v-if="item.soon"
@@ -82,10 +86,7 @@ const { rootPages, folderGroups } = useSidebarSections(() => props.tree);
         <SidebarGroupContent>
           <SidebarMenu class="gap-0.5">
             <template
-              v-for="childItem in (group.children || []).filter(
-                (child: NavigationItem) =>
-                  !child.hide && !SIDEBAR_EXCLUDED_PAGES.includes(child.path),
-              )"
+              v-for="childItem in (group.children || []).filter(isChildVisible)"
               :key="childItem.path"
             >
               <SidebarMenuItem>
@@ -94,7 +95,7 @@ const { rootPages, folderGroups } = useSidebarSections(() => props.tree);
                   :is-active="childItem?.path === path"
                   class="
                     relative h-7.5 w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0
-                    after:rounded-md data-[active=true]:border-accent data-[active=true]:bg-accent 3xl:fixed:w-full 3xl:fixed:max-w-48
+                    after:rounded-md data-[active=true]:bg-accent 3xl:fixed:w-full 3xl:fixed:max-w-48
                   "
                 >
                   <NuxtLink :to="childItem?.path" prefetch-on="interaction">
@@ -107,11 +108,11 @@ const { rootPages, folderGroups } = useSidebarSections(() => props.tree);
                     {{ childItem.title }}
                     <span
                       v-if="childItem.new"
-                      class="size-2 items-center gap-1 rounded-md border-0 bg-green-600 dark:bg-green-500"
+                      class="size-2 items-center gap-1 rounded-md border-0 bg-green-500"
                     />
                     <span
                       v-else-if="childItem.beta"
-                      class="size-2 items-center gap-1 rounded-md border-0 bg-orange-600 dark:bg-orange-500"
+                      class="size-2 items-center gap-1 rounded-md border-0 bg-orange-500"
                     />
                     <Badge
                       v-if="childItem.soon"
@@ -133,3 +134,10 @@ const { rootPages, folderGroups } = useSidebarSections(() => props.tree);
     </SidebarContent>
   </Sidebar>
 </template>
+
+<style scoped>
+:deep([data-sidebar="menu-button"][data-active="true"]),
+[data-sidebar="menu-button"][data-active="true"] {
+  border-color: var(--accent);
+}
+</style>
