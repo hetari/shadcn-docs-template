@@ -9,7 +9,7 @@ A production-ready documentation template built with **Nuxt 4.4** and **shadcn-v
 <img src="https://raw.githubusercontent.com/hetari/shadcn-docs-template/main/black.png" width="100%" />
 
 ## 📚 Documentation
-For more information, please visit the [Documentation](https://shadcn-docs-template-s6xq92.cranl.net/).
+For more information, please visit the [Documentation](https://shadcn-docs-template-s6xq92.cranl.net).
 
 ## ✨ Features
 
