@@ -93,7 +93,7 @@ export default defineNuxtConfig({
   },
 
   site: {
-    url: "https://shadcn-docs-template-s6xq92.cranl.net",
+    url: "https://shadcn-docs-template-hwnwf5.cranl.net",
     name: "shadcn-docs-template",
   },
 
