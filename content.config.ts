@@ -23,6 +23,7 @@ export default defineContentConfig({
         lastUpdated: z.string().optional(),
         navigation: z
           .object({
+            title: z.string().optional(),
             icon: z.string().optional(),
           })
           .optional(),

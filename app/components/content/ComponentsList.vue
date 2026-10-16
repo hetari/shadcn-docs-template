@@ -1,8 +1,9 @@
 <script setup lang="ts">
 const { data } = await useNavigation();
 
-const list = computed(
-  () => data.value?.[0]?.children.find(item => item.title === "Components")?.children ?? [],
+const list = computed(() =>
+  (data.value?.[0]?.children.find(item => item.title === "Components")?.children ?? [])
+    .filter(item => item.path !== "/docs/components"),
 );
 </script>
 

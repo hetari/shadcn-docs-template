@@ -15,7 +15,7 @@ const props = defineProps<{
 const router = useRouter();
 const open = ref(false);
 
-const { rootPages, folderGroups } = useSidebarSections(() => props.tree?.[0]);
+const { sectionsLabel, rootPages, folderGroups } = useSidebarSections(() => props.tree?.[0]);
 
 function handleNavigate(path: string) {
   router.push(path);
@@ -101,10 +101,10 @@ function isChildVisible(child: NavigationItem): boolean {
           </div>
         </div>
 
-        <!-- Sections (Root Pages) -->
+        <!-- Pinned Sections / Quick Links -->
         <div v-if="rootPages.length" class="flex flex-col gap-4">
           <div class="text-sm font-medium text-muted-foreground">
-            Sections
+            {{ sectionsLabel }}
           </div>
           <div class="flex flex-col gap-3">
             <NuxtLink

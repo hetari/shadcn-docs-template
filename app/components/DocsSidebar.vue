@@ -8,7 +8,7 @@ const props = defineProps<{
 
 const { path } = toRefs(useRoute());
 
-const { rootPages, folderGroups } = useSidebarSections(() => props.tree);
+const { sectionsLabel, rootPages, folderGroups } = useSidebarSections(() => props.tree);
 
 function isChildVisible(child: NavigationItem): boolean {
   return !child.hide && !SIDEBAR_EXCLUDED_PAGES.includes(child.path);
@@ -25,10 +25,10 @@ function isChildVisible(child: NavigationItem): boolean {
         class="sticky -top-1 z-10 h-8 shrink-0 bg-linear-to-b from-background via-background/80 to-background/50 blur-xs"
       />
 
-      <!-- Sections (Root Pages natively ordered by Nuxt Content) -->
+      <!-- Pinned Sections / Quick Links -->
       <SidebarGroup v-if="rootPages.length > 0">
         <SidebarGroupLabel class="font-medium text-muted-foreground">
-          Sections
+          {{ sectionsLabel }}
         </SidebarGroupLabel>
         <SidebarGroupContent>
           <SidebarMenu>
