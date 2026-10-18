@@ -4,22 +4,44 @@ set -eo pipefail
 FORCE_VERSION="${INPUT_FORCE_VERSION:-${FORCE_VERSION:-}}"
 DRY_RUN="${INPUT_DRY_RUN:-${DRY_RUN:-false}}"
 
+# One rolling branch / one open PR — new npm releases add commits here instead of new PRs.
+DEFAULT_UPDATE_BRANCH="nuxt-update"
+
 echo "=========================================="
 echo " Nuxt Upstream Release Watcher"
 echo "=========================================="
 
-# 1. Read current Nuxt version from package.json
-CURRENT_RAW=$(jq -r '.dependencies.nuxt // ""' package.json)
-CURRENT_VERSION=$(echo "$CURRENT_RAW" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n1)
+semver_gt() {
+  CUR="$1" TGT="$2" bun -e '
+    const c = process.env.CUR.split(".").map(Number);
+    const t = process.env.TGT.split(".").map(Number);
+    for (let i = 0; i < Math.max(c.length, t.length); i++) {
+      const cv = c[i] || 0;
+      const tv = t[i] || 0;
+      if (tv > cv) { process.exit(0); }
+      if (tv < cv) { process.exit(1); }
+    }
+    process.exit(1);
+  '
+}
 
-if [ -z "$CURRENT_VERSION" ]; then
-  echo "❌ Error: Could not determine current 'nuxt' version in package.json"
+read_nuxt_version_from_json() {
+  echo "$1" | jq -r '.dependencies.nuxt // ""' | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n1
+}
+
+DEFAULT_BRANCH=$(gh repo view --json defaultBranchRef --jq .defaultBranchRef.name 2>/dev/null || echo "main")
+git fetch origin "${DEFAULT_BRANCH}" --quiet
+
+MAIN_PKG=$(git show "origin/${DEFAULT_BRANCH}:package.json")
+MAIN_VERSION=$(read_nuxt_version_from_json "$MAIN_PKG")
+
+if [ -z "$MAIN_VERSION" ]; then
+  echo "❌ Error: Could not determine 'nuxt' version on origin/${DEFAULT_BRANCH}"
   exit 1
 fi
 
-echo "📦 Current Nuxt version: v${CURRENT_VERSION}"
+echo "📦 Nuxt on ${DEFAULT_BRANCH}: v${MAIN_VERSION}"
 
-# 2. Determine target version from the npm registry (matches what bun install resolves)
 if [ -n "$FORCE_VERSION" ]; then
   TARGET_VERSION="$FORCE_VERSION"
   echo "🎯 Manual version specified: v${TARGET_VERSION}"
@@ -28,164 +50,144 @@ else
   echo "🌐 Latest nuxt on npm: v${TARGET_VERSION}"
 fi
 
-echo "🎯 Target Nuxt version: v${TARGET_VERSION}"
-
-# 3. Compare current vs target version
 if ! [[ "$TARGET_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
   echo "❌ Error: Invalid target version '${TARGET_VERSION}'"
   exit 1
 fi
-if [ -z "$FORCE_VERSION" ]; then
-  IS_NEWER=$(CUR="$CURRENT_VERSION" TGT="$TARGET_VERSION" bun -e '
-    const c = process.env.CUR.split(".").map(Number);
-    const t = process.env.TGT.split(".").map(Number);
-    for (let i = 0; i < Math.max(c.length, t.length); i++) {
-      const cv = c[i] || 0;
-      const tv = t[i] || 0;
-      if (tv > cv) { console.log("true"); process.exit(0); }
-      if (tv < cv) { console.log("false"); process.exit(0); }
-    }
-    console.log("false");
-  ')
 
-  if [ "$IS_NEWER" != "true" ]; then
-    echo "✅ Up-to-date! Current version (v${CURRENT_VERSION}) is >= npm latest (v${TARGET_VERSION}). No PR needed."
-    exit 0
-  fi
-fi
-
-echo "🚀 Found newer version: v${TARGET_VERSION} (current is v${CURRENT_VERSION})"
-
-BRANCH_NAME="nuxt-update/v${TARGET_VERSION}"
-RELEASE_URL="https://github.com/nuxt/nuxt/releases/tag/v${TARGET_VERSION}"
-DEFAULT_BRANCH=$(gh repo view --json defaultBranchRef --jq .defaultBranchRef.name 2>/dev/null || echo "main")
-REPO_OWNER=$(gh repo view --json owner --jq .owner.login 2>/dev/null || echo "")
-HEAD_REF="${BRANCH_NAME}"
-if [ -n "$REPO_OWNER" ]; then
-  HEAD_REF="${REPO_OWNER}:${BRANCH_NAME}"
-fi
-
-# 4. If an open PR already exists for this update, nothing to do
-EXISTING_PR=$(gh pr list --state open --head "${HEAD_REF}" --json number --jq '.[0].number' 2>/dev/null || true)
-if [ -z "$EXISTING_PR" ] && [ "$HEAD_REF" != "${BRANCH_NAME}" ]; then
-  EXISTING_PR=$(gh pr list --state open --head "${BRANCH_NAME}" --json number --jq '.[0].number' 2>/dev/null || true)
-fi
-if [ -n "$EXISTING_PR" ]; then
-  echo "✅ Open PR #${EXISTING_PR} already exists for '${BRANCH_NAME}'. Nothing to do."
+if [ -z "$FORCE_VERSION" ] && ! semver_gt "$MAIN_VERSION" "$TARGET_VERSION"; then
+  echo "✅ ${DEFAULT_BRANCH} (v${MAIN_VERSION}) is already at or above npm latest (v${TARGET_VERSION}). No PR needed."
   exit 0
 fi
 
-REMOTE_BRANCH_EXISTS=false
+echo "🚀 npm target: v${TARGET_VERSION} (${DEFAULT_BRANCH} is v${MAIN_VERSION})"
+
+# Reuse the branch behind an open nuxt-update PR (including legacy nuxt-update/v* branches).
+OPEN_PR_JSON=$(gh pr list --state open --json number,headRefName \
+  --jq '[.[] | select(.headRefName == "'"${DEFAULT_UPDATE_BRANCH}"'" or (.headRefName | startswith("nuxt-update")))] | .[0]' 2>/dev/null || true)
+
+OPEN_PR_NUMBER=""
+BRANCH_NAME="${DEFAULT_UPDATE_BRANCH}"
+if [ -n "$OPEN_PR_JSON" ] && [ "$OPEN_PR_JSON" != "null" ]; then
+  OPEN_PR_NUMBER=$(echo "$OPEN_PR_JSON" | jq -r '.number')
+  BRANCH_NAME=$(echo "$OPEN_PR_JSON" | jq -r '.headRefName')
+  echo "🔗 Reusing open PR #${OPEN_PR_NUMBER} on branch '${BRANCH_NAME}'"
+elif git ls-remote --exit-code --heads origin "refs/heads/${DEFAULT_UPDATE_BRANCH}" > /dev/null 2>&1; then
+  BRANCH_NAME="${DEFAULT_UPDATE_BRANCH}"
+  echo "🌿 Reusing remote branch '${BRANCH_NAME}' (no open PR yet)"
+fi
+
+RELEASE_URL="https://github.com/nuxt/nuxt/releases/tag/v${TARGET_VERSION}"
+
+remote_ref() {
+  echo "refs/remotes/origin/${1}"
+}
+
 if git ls-remote --exit-code --heads origin "refs/heads/${BRANCH_NAME}" > /dev/null 2>&1; then
-  REMOTE_BRANCH_EXISTS=true
+  BRANCH_PKG=$(git show "$(remote_ref "${BRANCH_NAME}"):package.json" 2>/dev/null || echo "")
+  BRANCH_VERSION=$(read_nuxt_version_from_json "$BRANCH_PKG")
+  if [ -n "$BRANCH_VERSION" ] && ! semver_gt "$BRANCH_VERSION" "$TARGET_VERSION"; then
+    echo "✅ Branch '${BRANCH_NAME}' already targets v${BRANCH_VERSION} (>= v${TARGET_VERSION}). Nothing to do."
+    exit 0
+  fi
 fi
 
 write_pr_body() {
   local body_file
   body_file=$(mktemp)
   cat << EOF > "$body_file"
-## 🚀 Nuxt Update: v${TARGET_VERSION}
+## 🚀 Nuxt update (rolling PR)
 
-A new **nuxt** release is on npm: [v${TARGET_VERSION}](https://www.npmjs.com/package/nuxt/v/${TARGET_VERSION}) ([nuxt/nuxt release notes](${RELEASE_URL})).
+This PR tracks the latest **nuxt** release on npm. It is updated in place on \`${BRANCH_NAME}\` when a newer version is published — you keep **one branch and one PR** until you merge.
 
-This automated Pull Request bumps \`nuxt\` in \`package.json\` and regenerates \`bun.lock\`.
+**Current target:** [v${TARGET_VERSION}](https://www.npmjs.com/package/nuxt/v/${TARGET_VERSION}) ([release notes](${RELEASE_URL}))
 
----
-
-### 📦 Updated Dependencies
-- \`nuxt\`: \`^${CURRENT_VERSION}\` ➔ \`^${TARGET_VERSION}\`
+\`${DEFAULT_BRANCH}\` still has \`^${MAIN_VERSION}\`; this branch bumps to \`^${TARGET_VERSION}\` and refreshes \`bun.lock\`.
 
 ---
 
-### 🛠️ Next Steps (Finishing the update locally)
-
-Fetch this branch, test your documentation template, resolve any migrations or module updates, and push your changes:
+### 🛠️ Local testing
 
 \`\`\`bash
-# 1. Fetch and checkout the update branch
 git fetch origin
 git checkout ${BRANCH_NAME}
 git pull origin ${BRANCH_NAME}
-
-# 2. Install dependencies & verify local dev server
 bun install
 bun dev
-
-# 3. Run linting & build verification
 bun lint:fix
 bun run build
-
-# 4. Commit and push your migration changes
-git add .
-git commit -m "chore: complete migration for Nuxt v${TARGET_VERSION}"
-git push origin ${BRANCH_NAME}
 \`\`\`
 
 ---
 
 ### 📋 Checklist
-- [ ] Reviewed [Nuxt v${TARGET_VERSION} Release Notes](${RELEASE_URL})
-- [ ] Dev server starts and runs without errors (\`bun dev\`)
-- [ ] Documentation and search work as expected
-- [ ] Linting passes (\`bun lint\`)
-- [ ] Production build succeeds (\`bun run build\`)
+- [ ] Reviewed [Nuxt v${TARGET_VERSION} release notes](${RELEASE_URL})
+- [ ] Dev server runs (\`bun dev\`)
+- [ ] Lint and production build pass
 EOF
   echo "$body_file"
 }
 
-open_pull_request() {
-  local pr_body_file
-  pr_body_file=$(write_pr_body)
-  echo "📬 Creating Pull Request against base branch '${DEFAULT_BRANCH}'..."
-  gh pr create \
-    --base "${DEFAULT_BRANCH}" \
-    --head "${BRANCH_NAME}" \
-    --title "chore(deps): bump Nuxt to v${TARGET_VERSION}" \
-    --body-file "$pr_body_file"
-  rm -f "$pr_body_file"
-  echo "🎉 Done! Pull Request for Nuxt v${TARGET_VERSION} opened successfully."
+apply_bump_and_push() {
+  git config user.name "github-actions[bot]"
+  git config user.email "github-actions[bot]@users.noreply.github.com"
+
+  echo "📥 Updating Nuxt to ^${TARGET_VERSION}..."
+  bun add "nuxt@^${TARGET_VERSION}"
+
+  if git diff --quiet package.json bun.lock; then
+    echo "⚠️ No changes in package.json or bun.lock after update."
+    return 1
+  fi
+
+  git add package.json bun.lock
+  HUSKY=0 git commit -m "chore(deps): bump nuxt to v${TARGET_VERSION}"
+  echo "📤 Pushing '${BRANCH_NAME}'..."
+  git push origin "${BRANCH_NAME}"
+  return 0
 }
 
-# 5. Remote branch exists but no open PR (e.g. push succeeded, pr create failed earlier)
-if [ "$REMOTE_BRANCH_EXISTS" = true ]; then
-  echo "🔄 Remote branch '${BRANCH_NAME}' exists without an open PR — opening PR from existing branch..."
-  if [ "$DRY_RUN" = "true" ]; then
-    echo "🔍 DRY RUN: Would open a PR for existing branch '${BRANCH_NAME}'."
-    exit 0
+sync_pr_metadata() {
+  local pr_body_file
+  pr_body_file=$(write_pr_body)
+  if [ -n "$OPEN_PR_NUMBER" ]; then
+    echo "📝 Updating PR #${OPEN_PR_NUMBER} title and description..."
+    gh pr edit "${OPEN_PR_NUMBER}" \
+      --title "chore(deps): bump Nuxt to v${TARGET_VERSION}" \
+      --body-file "$pr_body_file"
+  else
+    echo "📬 Creating Pull Request against '${DEFAULT_BRANCH}'..."
+    gh pr create \
+      --base "${DEFAULT_BRANCH}" \
+      --head "${BRANCH_NAME}" \
+      --title "chore(deps): bump Nuxt to v${TARGET_VERSION}" \
+      --body-file "$pr_body_file"
   fi
-  open_pull_request
-  exit 0
-fi
+  rm -f "$pr_body_file"
+}
 
-# 6. Dry run check (new branch path)
 if [ "$DRY_RUN" = "true" ]; then
-  echo "🔍 DRY RUN: Would create branch '${BRANCH_NAME}', update Nuxt to v${TARGET_VERSION}, and open a Pull Request."
+  echo "🔍 DRY RUN: Would update branch '${BRANCH_NAME}' to v${TARGET_VERSION} and sync one PR."
   exit 0
 fi
 
-# 7. Create local branch
-echo "🌿 Creating branch ${BRANCH_NAME}..."
-git checkout -b "${BRANCH_NAME}"
-
-# 8. Update Nuxt in package.json and bun.lock
-echo "📥 Updating Nuxt to ^${TARGET_VERSION}..."
-bun add "nuxt@^${TARGET_VERSION}"
-
-# 9. Verify modifications
-if git diff --quiet package.json bun.lock; then
-  echo "⚠️ No changes detected in package.json or bun.lock after update. Skipping commit..."
-  exit 0
+if git ls-remote --exit-code --heads origin "refs/heads/${BRANCH_NAME}" > /dev/null 2>&1; then
+  echo "⬇️  Checking out existing branch '${BRANCH_NAME}'..."
+  git checkout -B "${BRANCH_NAME}" "$(remote_ref "${BRANCH_NAME}")"
+else
+  echo "🌿 Creating branch '${BRANCH_NAME}' from origin/${DEFAULT_BRANCH}..."
+  git checkout -B "${BRANCH_NAME}" "$(remote_ref "${DEFAULT_BRANCH}")"
 fi
 
-# 10. Configure git author and commit
-git config user.name "github-actions[bot]"
-git config user.email "github-actions[bot]@users.noreply.github.com"
-git add package.json bun.lock
-HUSKY=0 git commit -m "chore(deps): bump nuxt to v${TARGET_VERSION}"
+echo "🔀 Merging latest origin/${DEFAULT_BRANCH}..."
+git merge "$(remote_ref "${DEFAULT_BRANCH}")" -m "chore: merge ${DEFAULT_BRANCH} into ${BRANCH_NAME}" || {
+  echo "❌ Merge conflict with ${DEFAULT_BRANCH}. Resolve manually on '${BRANCH_NAME}'."
+  exit 1
+}
 
-# 11. Push branch to origin
-echo "📤 Pushing branch '${BRANCH_NAME}' to remote origin..."
-git push origin "${BRANCH_NAME}"
-
-# 12. Create Pull Request
-open_pull_request
+if apply_bump_and_push; then
+  sync_pr_metadata
+  echo "🎉 Done! Single rolling PR now targets Nuxt v${TARGET_VERSION}."
+else
+  echo "ℹ️  Branch already matches target; PR metadata unchanged."
+fi
