@@ -150,7 +150,7 @@ This PR tracks the latest **nuxt** release on npm. It is updated in place on \`$
 
 **Current target:** [v${TARGET_VERSION}](https://www.npmjs.com/package/nuxt/v/${TARGET_VERSION}) ([release notes](${RELEASE_URL}))
 
-\`${DEFAULT_BRANCH}\` still has \`^${MAIN_VERSION}\`; this branch bumps to \`^${TARGET_VERSION}\` and refreshes \`bun.lock\`.
+\`${DEFAULT_BRANCH}\` still has \`^${MAIN_VERSION}\`; this branch runs [\`nuxt upgrade\`](https://nuxt.com/docs/4.x/api/commands/upgrade) (v4 channel) and refreshes \`bun.lock\`.
 
 ---
 
@@ -164,6 +164,8 @@ bun install
 bun dev
 bun lint:fix
 bun run build
+# Or upgrade locally the same way CI does:
+bunx nuxt upgrade . --channel v4 --dedupe
 \`\`\`
 
 ---
@@ -176,12 +178,39 @@ EOF
   echo "$body_file"
 }
 
+pr_create_help() {
+  cat <<'EOF'
+❌ GitHub Actions cannot open pull requests with the default GITHUB_TOKEN on this repo.
+
+Fix one of the following, then re-run the workflow:
+
+  1. Settings → Actions → General → Workflow permissions
+     → enable "Allow GitHub Actions to create and approve pull requests"
+
+  2. Add a repository secret PAT_TOKEN (classic PAT with `repo`, or fine-grained:
+     Contents + Pull requests read/write). The workflow already uses it for git/gh.
+EOF
+}
+
 apply_bump_and_push() {
   git config user.name "github-actions[bot]"
   git config user.email "github-actions[bot]@users.noreply.github.com"
 
-  echo "📥 Updating Nuxt to ^${TARGET_VERSION}..."
-  bun add "nuxt@^${TARGET_VERSION}"
+  echo "📦 Installing dependencies before upgrade..."
+  bun install
+
+  if [ -n "$FORCE_VERSION" ]; then
+    echo "📥 Pinning Nuxt to ^${FORCE_VERSION} (manual force_version)..."
+    bun add "nuxt@^${FORCE_VERSION}"
+  else
+    echo "📥 Running nuxt upgrade (channel v4, dedupe)..."
+    bunx nuxt upgrade . --channel v4 --dedupe
+  fi
+
+  RESOLVED_VERSION=$(read_nuxt_version_from_json "$(cat package.json)")
+  if [ -n "$RESOLVED_VERSION" ]; then
+    TARGET_VERSION="$RESOLVED_VERSION"
+  fi
 
   if git diff --quiet package.json bun.lock; then
     echo "⚠️ No changes in package.json or bun.lock after update."
@@ -208,17 +237,25 @@ sync_pr_metadata() {
       --jq 'sort_by(.number) | last | .number // empty' 2>/dev/null || true)
     if [ -n "$CLOSED_PR_NUMBER" ]; then
       echo "♻️ Reopening closed PR #${CLOSED_PR_NUMBER} on '${BRANCH_NAME}'..."
-      gh pr reopen "${CLOSED_PR_NUMBER}"
+      if ! gh pr reopen "${CLOSED_PR_NUMBER}"; then
+        pr_create_help
+        rm -f "$pr_body_file"
+        exit 1
+      fi
       gh pr edit "${CLOSED_PR_NUMBER}" \
         --title "chore(deps): bump Nuxt to v${TARGET_VERSION}" \
         --body-file "$pr_body_file"
     else
       echo "📬 Creating Pull Request against '${DEFAULT_BRANCH}'..."
-      gh pr create \
+      if ! gh pr create \
         --base "${DEFAULT_BRANCH}" \
         --head "${BRANCH_NAME}" \
         --title "chore(deps): bump Nuxt to v${TARGET_VERSION}" \
-        --body-file "$pr_body_file"
+        --body-file "$pr_body_file"; then
+        pr_create_help
+        rm -f "$pr_body_file"
+        exit 1
+      fi
     fi
   fi
   rm -f "$pr_body_file"

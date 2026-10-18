@@ -62,6 +62,17 @@ jobs:
         # Pinned to v2.0.1
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
 
+      # GITHUB_TOKEN cannot create PRs unless the repo allows it; PAT_TOKEN always works.
+      - name: Require token that can open pull requests
+        env:
+          HAS_PAT: ${{ secrets.PAT_TOKEN != '' }}
+        run: |
+          if [ "$HAS_PAT" = "true" ]; then
+            echo "Using PAT_TOKEN for git push and gh pr create."
+          else
+            echo "::warning::PAT_TOKEN is not set. If PR creation fails, add PAT_TOKEN or enable Settings → Actions → Allow GitHub Actions to create and approve pull requests."
+          fi
+
       - name: Check Nuxt release & Create PR
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
