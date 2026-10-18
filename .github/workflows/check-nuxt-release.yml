@@ -26,6 +26,8 @@ permissions:
 
 jobs:
   check-nuxt-release:
+    # Scheduled workflows always use the default branch; block accidental fork runs.
+    if: github.event.repository.fork == false
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -36,11 +38,18 @@ jobs:
         # Pinned to v4.2.2
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          # PAT_TOKEN is used so that created PRs can trigger other workflows (e.g. CI checks),
-          # as actions triggered by GITHUB_TOKEN do not spawn downstream workflow runs.
-          # Falls back to GITHUB_TOKEN when PAT_TOKEN is not configured.
-          token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+          # Optional PAT with repo + pull_request (contents) scopes so PRs trigger CI.
+          # When unset, github.token is used (PRs may not re-run workflows until merge).
+          token: ${{ secrets.PAT_TOKEN || github.token }}
+          ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0
+          persist-credentials: true
+
+      - name: Sync default branch from origin
+        run: |
+          git fetch origin "${{ github.event.repository.default_branch }}" --prune
+          git checkout "${{ github.event.repository.default_branch }}"
+          git reset --hard "origin/${{ github.event.repository.default_branch }}"
 
       - name: Setup Node
         # Pinned to v4.2.0
@@ -55,8 +64,9 @@ jobs:
 
       - name: Check Nuxt release & Create PR
         env:
-          GH_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
           INPUT_FORCE_VERSION: ${{ inputs.force_version }}
           INPUT_DRY_RUN: ${{ inputs.dry_run }}
         run: |
+          chmod +x ./.github/scripts/check-nuxt-release.sh
           ./.github/scripts/check-nuxt-release.sh

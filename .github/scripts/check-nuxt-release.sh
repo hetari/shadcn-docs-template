@@ -6,6 +6,7 @@ DRY_RUN="${INPUT_DRY_RUN:-${DRY_RUN:-false}}"
 
 # One rolling branch / one open PR — new npm releases add commits here instead of new PRs.
 DEFAULT_UPDATE_BRANCH="nuxt-update"
+ALLOWED_DEFAULT_BRANCHES="main master"
 
 echo "=========================================="
 echo " Nuxt Upstream Release Watcher"
@@ -25,12 +26,38 @@ semver_gt() {
   '
 }
 
+is_semver() {
+  [[ "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+}
+
+is_safe_update_branch() {
+  [[ "$1" == "${DEFAULT_UPDATE_BRANCH}" || "$1" =~ ^nuxt-update/v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+}
+
 read_nuxt_version_from_json() {
   echo "$1" | jq -r '.dependencies.nuxt // ""' | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n1
 }
 
+if [ "$DRY_RUN" != "true" ] && [ "$DRY_RUN" != "false" ]; then
+  echo "❌ Error: Invalid dry_run value (expected true or false)."
+  exit 1
+fi
+
+if [ -n "$FORCE_VERSION" ] && ! is_semver "$FORCE_VERSION"; then
+  echo "❌ Error: force_version must be semver (e.g. 4.6.5), got '${FORCE_VERSION}'."
+  exit 1
+fi
+
 DEFAULT_BRANCH=$(gh repo view --json defaultBranchRef --jq .defaultBranchRef.name 2>/dev/null || echo "main")
-git fetch origin "${DEFAULT_BRANCH}" --quiet
+case " ${ALLOWED_DEFAULT_BRANCHES} " in
+  *" ${DEFAULT_BRANCH} "*) ;;
+  *)
+    echo "❌ Error: Unsupported default branch '${DEFAULT_BRANCH}' (allowed: ${ALLOWED_DEFAULT_BRANCHES})."
+    exit 1
+    ;;
+esac
+
+git fetch origin "${DEFAULT_BRANCH}" --prune --quiet
 
 MAIN_PKG=$(git show "origin/${DEFAULT_BRANCH}:package.json")
 MAIN_VERSION=$(read_nuxt_version_from_json "$MAIN_PKG")
@@ -46,11 +73,11 @@ if [ -n "$FORCE_VERSION" ]; then
   TARGET_VERSION="$FORCE_VERSION"
   echo "🎯 Manual version specified: v${TARGET_VERSION}"
 else
-  TARGET_VERSION=$(npm view nuxt version)
+  TARGET_VERSION=$(npm view nuxt@latest version)
   echo "🌐 Latest nuxt on npm: v${TARGET_VERSION}"
 fi
 
-if ! [[ "$TARGET_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+if ! is_semver "$TARGET_VERSION"; then
   echo "❌ Error: Invalid target version '${TARGET_VERSION}'"
   exit 1
 fi
@@ -62,19 +89,38 @@ fi
 
 echo "🚀 npm target: v${TARGET_VERSION} (${DEFAULT_BRANCH} is v${MAIN_VERSION})"
 
-# Reuse the branch behind an open nuxt-update PR (including legacy nuxt-update/v* branches).
-OPEN_PR_JSON=$(gh pr list --state open --json number,headRefName \
-  --jq '[.[] | select(.headRefName == "'"${DEFAULT_UPDATE_BRANCH}"'" or (.headRefName | startswith("nuxt-update")))] | .[0]' 2>/dev/null || true)
+REPO_OWNER=$(gh repo view --json owner --jq .owner.login 2>/dev/null || echo "")
+if [ -z "$REPO_OWNER" ]; then
+  echo "❌ Error: Could not determine repository owner."
+  exit 1
+fi
+
+# Only reuse PRs from this repository (never fork heads named nuxt-update).
+OPEN_PR_JSON=$(gh pr list --state open --json number,headRefName,isCrossRepository,headRepositoryOwner \
+  --jq '[.[] | select(
+    .isCrossRepository == false
+    and (.headRepositoryOwner.login == "'"${REPO_OWNER}"'")
+    and (.headRefName == "'"${DEFAULT_UPDATE_BRANCH}"'" or (.headRefName | startswith("nuxt-update")))
+  )] | .[0]' 2>/dev/null || true)
 
 OPEN_PR_NUMBER=""
 BRANCH_NAME="${DEFAULT_UPDATE_BRANCH}"
 if [ -n "$OPEN_PR_JSON" ] && [ "$OPEN_PR_JSON" != "null" ]; then
   OPEN_PR_NUMBER=$(echo "$OPEN_PR_JSON" | jq -r '.number')
   BRANCH_NAME=$(echo "$OPEN_PR_JSON" | jq -r '.headRefName')
+  if ! is_safe_update_branch "$BRANCH_NAME"; then
+    echo "❌ Error: Refusing unsafe PR head branch '${BRANCH_NAME}'."
+    exit 1
+  fi
   echo "🔗 Reusing open PR #${OPEN_PR_NUMBER} on branch '${BRANCH_NAME}'"
 elif git ls-remote --exit-code --heads origin "refs/heads/${DEFAULT_UPDATE_BRANCH}" > /dev/null 2>&1; then
   BRANCH_NAME="${DEFAULT_UPDATE_BRANCH}"
   echo "🌿 Reusing remote branch '${BRANCH_NAME}' (no open PR yet)"
+fi
+
+if ! is_safe_update_branch "$BRANCH_NAME"; then
+  echo "❌ Error: Refusing unsafe update branch '${BRANCH_NAME}'."
+  exit 1
 fi
 
 RELEASE_URL="https://github.com/nuxt/nuxt/releases/tag/v${TARGET_VERSION}"
@@ -142,8 +188,8 @@ apply_bump_and_push() {
 
   git add package.json bun.lock
   HUSKY=0 git commit -m "chore(deps): bump nuxt to v${TARGET_VERSION}"
-  echo "📤 Pushing '${BRANCH_NAME}'..."
-  git push origin "${BRANCH_NAME}"
+  echo "📤 Pushing '${BRANCH_NAME}' (force-with-lease after rebase onto ${DEFAULT_BRANCH})..."
+  git push --force-with-lease origin "HEAD:${BRANCH_NAME}"
   return 0
 }
 
@@ -167,23 +213,13 @@ sync_pr_metadata() {
 }
 
 if [ "$DRY_RUN" = "true" ]; then
-  echo "🔍 DRY RUN: Would update branch '${BRANCH_NAME}' to v${TARGET_VERSION} and sync one PR."
+  echo "🔍 DRY RUN: Would recreate '${BRANCH_NAME}' from origin/${DEFAULT_BRANCH}, bump to v${TARGET_VERSION}, and sync one PR."
   exit 0
 fi
 
-if git ls-remote --exit-code --heads origin "refs/heads/${BRANCH_NAME}" > /dev/null 2>&1; then
-  echo "⬇️  Checking out existing branch '${BRANCH_NAME}'..."
-  git checkout -B "${BRANCH_NAME}" "$(remote_ref "${BRANCH_NAME}")"
-else
-  echo "🌿 Creating branch '${BRANCH_NAME}' from origin/${DEFAULT_BRANCH}..."
-  git checkout -B "${BRANCH_NAME}" "$(remote_ref "${DEFAULT_BRANCH}")"
-fi
-
-echo "🔀 Merging latest origin/${DEFAULT_BRANCH}..."
-git merge "$(remote_ref "${DEFAULT_BRANCH}")" -m "chore: merge ${DEFAULT_BRANCH} into ${BRANCH_NAME}" || {
-  echo "❌ Merge conflict with ${DEFAULT_BRANCH}. Resolve manually on '${BRANCH_NAME}'."
-  exit 1
-}
+git fetch origin "${DEFAULT_BRANCH}" --prune --quiet
+echo "🔄 Recreating '${BRANCH_NAME}' from latest origin/${DEFAULT_BRANCH} (avoids merge conflicts)..."
+git checkout -B "${BRANCH_NAME}" "$(remote_ref "${DEFAULT_BRANCH}")"
 
 if apply_bump_and_push; then
   sync_pr_metadata

@@ -16,6 +16,7 @@ permissions:
 jobs:
   release:
     name: Release & Changelog
+    if: github.event.repository.fork == false && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -24,7 +25,7 @@ jobs:
         # Pinned to v4.2.2
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_TOKEN || github.token }}
           fetch-depth: 0
 
       - name: Setup Node
@@ -50,13 +51,12 @@ jobs:
       - name: Version and Release
         if: fromJSON(steps.changesets.outputs.count) > 0
         env:
-          GH_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
         run: |
-          # Guard publishing so it runs only on the main branch
           CURRENT_REF="${GITHUB_REF:-}"
           if [ "$CURRENT_REF" != "refs/heads/main" ]; then
             echo "Skipping release on non-main ref ($CURRENT_REF)"
-            exit 0
+            exit 1
           fi
 
           # 1. Run changeset version to consume changesets and bump package.json / CHANGELOG.md
@@ -64,6 +64,10 @@ jobs:
 
           # 2. Extract new version from package.json
           NEW_VERSION=$(jq -r .version package.json)
+          if ! [[ "$NEW_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "❌ Refusing release: unexpected package version '${NEW_VERSION}'"
+            exit 1
+          fi
           TAG_NAME="v${NEW_VERSION}"
           echo "🚀 Preparing release for ${TAG_NAME}"
 
@@ -77,6 +81,10 @@ jobs:
 
           # 5. Commit only versioning changes and changeset artifacts
           git add package.json CHANGELOG.md .changeset
+          if git diff --cached --quiet; then
+            echo "❌ No versioning changes staged; aborting release."
+            exit 1
+          fi
           git commit -m "chore(release): ${TAG_NAME} [skip ci]"
 
           # 6. Rebase if main moved, then push commit before creating/pushing tag
