@@ -1,7 +1,28 @@
+# Dependabot version updates (no application libraries except Nuxt).
+# Replaces the removed Nuxt release watcher workflow.
+
 version: 2
-updates:
-  - package-ecosystem: github-actions
-    directory: /
+
+# One open PR per week: all eligible GitHub Actions bumps + Nuxt bump together.
+# See: https://docs.github.com/en/code-security/concepts/supply-chain-security/multi-ecosystem-updates
+multi-ecosystem-groups:
+  ci-and-nuxt:
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+
+updates:
+  # Pinned actions in .github/workflows (not local ./.github/actions paths).
+  - package-ecosystem: github-actions
+    directory: /
+    patterns:
+      - "*"
+    open-pull-requests-limit: 1
+    multi-ecosystem-group: ci-and-nuxt
+
+  # Only the root `nuxt` package — not @nuxt/*, Vue, or other bun dependencies.
+  - package-ecosystem: bun
+    directory: /
+    patterns:
+      - nuxt
+    open-pull-requests-limit: 1
+    multi-ecosystem-group: ci-and-nuxt
