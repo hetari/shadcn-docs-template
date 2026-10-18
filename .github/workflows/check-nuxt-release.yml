@@ -12,7 +12,7 @@ on:
         default: ""
         type: string
       dry_run:
-        description: "Dry run mode (check & log actions without pushing or opening PR)"
+        description: Dry run only (no push/PR). Leave unchecked to open or update the real PR.
         required: false
         default: false
         type: boolean
@@ -66,7 +66,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
           INPUT_FORCE_VERSION: ${{ inputs.force_version }}
-          INPUT_DRY_RUN: ${{ inputs.dry_run }}
+          INPUT_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
         run: |
           chmod +x ./.github/scripts/check-nuxt-release.sh
           ./.github/scripts/check-nuxt-release.sh

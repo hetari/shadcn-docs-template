@@ -116,6 +116,17 @@ if [ -n "$OPEN_PR_JSON" ] && [ "$OPEN_PR_JSON" != "null" ]; then
 elif git ls-remote --exit-code --heads origin "refs/heads/${DEFAULT_UPDATE_BRANCH}" > /dev/null 2>&1; then
   BRANCH_NAME="${DEFAULT_UPDATE_BRANCH}"
   echo "🌿 Reusing remote branch '${BRANCH_NAME}' (no open PR yet)"
+else
+  # Legacy runs used nuxt-update/vX.Y.Z and skipped when the branch existed but the PR was closed.
+  while IFS= read -r orphan; do
+    [ -z "$orphan" ] && continue
+    orphan_head="${orphan#refs/heads/}"
+    has_open_pr=$(gh pr list --state open --head "$orphan_head" --json number --jq 'length' 2>/dev/null || echo 0)
+    if [ "$has_open_pr" = "0" ]; then
+      echo "🧹 Removing orphaned update branch '${orphan_head}' (no open PR)..."
+      git push origin --delete "$orphan_head" || true
+    fi
+  done < <(git ls-remote --heads origin 2>/dev/null | awk '$2 ~ /^refs\/heads\/nuxt-update\/v[0-9]+\.[0-9]+\.[0-9]+$/ {print $2}')
 fi
 
 if ! is_safe_update_branch "$BRANCH_NAME"; then
@@ -128,15 +139,6 @@ RELEASE_URL="https://github.com/nuxt/nuxt/releases/tag/v${TARGET_VERSION}"
 remote_ref() {
   echo "refs/remotes/origin/${1}"
 }
-
-if git ls-remote --exit-code --heads origin "refs/heads/${BRANCH_NAME}" > /dev/null 2>&1; then
-  BRANCH_PKG=$(git show "$(remote_ref "${BRANCH_NAME}"):package.json" 2>/dev/null || echo "")
-  BRANCH_VERSION=$(read_nuxt_version_from_json "$BRANCH_PKG")
-  if [ -n "$BRANCH_VERSION" ] && ! semver_gt "$BRANCH_VERSION" "$TARGET_VERSION"; then
-    echo "✅ Branch '${BRANCH_NAME}' already targets v${BRANCH_VERSION} (>= v${TARGET_VERSION}). Nothing to do."
-    exit 0
-  fi
-fi
 
 write_pr_body() {
   local body_file
@@ -202,12 +204,22 @@ sync_pr_metadata() {
       --title "chore(deps): bump Nuxt to v${TARGET_VERSION}" \
       --body-file "$pr_body_file"
   else
-    echo "📬 Creating Pull Request against '${DEFAULT_BRANCH}'..."
-    gh pr create \
-      --base "${DEFAULT_BRANCH}" \
-      --head "${BRANCH_NAME}" \
-      --title "chore(deps): bump Nuxt to v${TARGET_VERSION}" \
-      --body-file "$pr_body_file"
+    CLOSED_PR_NUMBER=$(gh pr list --state closed --head "${BRANCH_NAME}" --json number \
+      --jq 'sort_by(.number) | last | .number // empty' 2>/dev/null || true)
+    if [ -n "$CLOSED_PR_NUMBER" ]; then
+      echo "♻️ Reopening closed PR #${CLOSED_PR_NUMBER} on '${BRANCH_NAME}'..."
+      gh pr reopen "${CLOSED_PR_NUMBER}"
+      gh pr edit "${CLOSED_PR_NUMBER}" \
+        --title "chore(deps): bump Nuxt to v${TARGET_VERSION}" \
+        --body-file "$pr_body_file"
+    else
+      echo "📬 Creating Pull Request against '${DEFAULT_BRANCH}'..."
+      gh pr create \
+        --base "${DEFAULT_BRANCH}" \
+        --head "${BRANCH_NAME}" \
+        --title "chore(deps): bump Nuxt to v${TARGET_VERSION}" \
+        --body-file "$pr_body_file"
+    fi
   fi
   rm -f "$pr_body_file"
 }
@@ -224,6 +236,17 @@ git checkout -B "${BRANCH_NAME}" "$(remote_ref "${DEFAULT_BRANCH}")"
 if apply_bump_and_push; then
   sync_pr_metadata
   echo "🎉 Done! Single rolling PR now targets Nuxt v${TARGET_VERSION}."
+elif [ -z "$OPEN_PR_NUMBER" ]; then
+  REMOTE_PKG=$(git show "$(remote_ref "${BRANCH_NAME}"):package.json" 2>/dev/null || echo "")
+  REMOTE_VERSION=$(read_nuxt_version_from_json "$REMOTE_PKG")
+  if [ -n "$REMOTE_VERSION" ] && ! semver_gt "$REMOTE_VERSION" "$TARGET_VERSION"; then
+    echo "ℹ️ Remote '${BRANCH_NAME}' already at v${REMOTE_VERSION}; opening or reopening PR..."
+    sync_pr_metadata
+    echo "🎉 Done! PR is open for Nuxt v${TARGET_VERSION}."
+  else
+    echo "❌ Could not bump Nuxt and no open PR to update."
+    exit 1
+  fi
 else
-  echo "ℹ️  Branch already matches target; PR metadata unchanged."
+  echo "ℹ️ Open PR #${OPEN_PR_NUMBER} unchanged (already at target)."
 fi
