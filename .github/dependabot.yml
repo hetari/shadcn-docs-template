@@ -1,27 +1,20 @@
-# Dependabot version updates (no application libraries except Nuxt).
-# Replaces the removed Nuxt release watcher workflow.
+# Dependabot: grouped GitHub Actions updates (one PR per week).
+#
+# Nuxt is handled by .github/workflows/check-nuxt-release.yml. Bun was removed
+# from Dependabot here because multi-ecosystem version updates only run on the
+# group schedule; the green dependabot.yml check is config validation, not a
+# version run. The watcher opens or refreshes a Nuxt PR when npm has a newer
+# release (e.g. 4.6.2 while lockfile is on 4.6.1).
 
 version: 2
 
-# One open PR per week: all eligible GitHub Actions bumps + Nuxt bump together.
-# See: https://docs.github.com/en/code-security/concepts/supply-chain-security/multi-ecosystem-updates
-multi-ecosystem-groups:
-  ci-and-nuxt:
+updates:
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
       interval: weekly
     open-pull-requests-limit: 1
-
-updates:
-  # Pinned actions in .github/workflows (not local ./.github/actions paths).
-  - package-ecosystem: github-actions
-    directory: /
-    patterns:
-      - "*"
-    multi-ecosystem-group: ci-and-nuxt
-
-  # Only the root `nuxt` package — not @nuxt/*, Vue, or other bun dependencies.
-  - package-ecosystem: bun
-    directory: /
-    patterns:
-      - nuxt
-    multi-ecosystem-group: ci-and-nuxt
+    groups:
+      github-actions:
+        patterns:
+          - "*"

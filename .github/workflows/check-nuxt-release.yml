@@ -1,0 +1,72 @@
+name: Nuxt Release Watcher
+
+on:
+  schedule:
+    # Runs every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      force_version:
+        description: Force a specific Nuxt version (e.g. 4.6.5). Leave empty to use latest on npm.
+        required: false
+        default: ""
+        type: string
+      dry_run:
+        description: "Dry run mode (check & log actions without pushing or opening PR)"
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: nuxt-release-watcher
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  check-nuxt-release:
+    # Scheduled workflows always use the default branch; block accidental fork runs.
+    if: github.event.repository.fork == false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        # Pinned to v4.2.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          # Optional PAT with repo + pull_request (contents) scopes so PRs trigger CI.
+          # When unset, github.token is used (PRs may not re-run workflows until merge).
+          token: ${{ secrets.PAT_TOKEN || github.token }}
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Sync default branch from origin
+        run: |
+          git fetch origin "${{ github.event.repository.default_branch }}" --prune
+          git checkout "${{ github.event.repository.default_branch }}"
+          git reset --hard "origin/${{ github.event.repository.default_branch }}"
+
+      - name: Setup Node
+        # Pinned to v4.2.0
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version-file: .node-version
+          registry-url: https://registry.npmjs.org
+
+      - name: Setup Bun
+        # Pinned to v2.0.1
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
+
+      - name: Check Nuxt release & Create PR
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
+          INPUT_FORCE_VERSION: ${{ inputs.force_version }}
+          INPUT_DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          chmod +x ./.github/scripts/check-nuxt-release.sh
+          ./.github/scripts/check-nuxt-release.sh
