@@ -60,6 +60,7 @@
   --font-sans: "Inter", sans-serif;
   --font-heading: "Inter", sans-serif;
   --radius: 0.625rem;
+  --tw-border-style: solid;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);

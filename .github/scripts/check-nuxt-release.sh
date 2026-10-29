@@ -150,7 +150,7 @@ This PR tracks the latest **nuxt** release on npm. It is updated in place on \`$
 
 **Current target:** [v${TARGET_VERSION}](https://www.npmjs.com/package/nuxt/v/${TARGET_VERSION}) ([release notes](${RELEASE_URL}))
 
-\`${DEFAULT_BRANCH}\` still has \`^${MAIN_VERSION}\`; this branch runs [\`nuxt upgrade\`](https://nuxt.com/docs/4.x/api/commands/upgrade) (v4 channel) and refreshes \`bun.lock\`.
+`\${DEFAULT_BRANCH}\` still has \`^\${MAIN_VERSION}\`; this branch runs [\`nuxt upgrade\`](https://nuxt.com/docs/4.x/api/commands/upgrade) (v4 channel), updates \`README.md\`, and refreshes \`bun.lock\`.
 
 ---
 
@@ -176,6 +176,7 @@ bun x nuxt upgrade --dedupe
 - [ ] Reviewed [Nuxt v${TARGET_VERSION} release notes](${RELEASE_URL})
 - [ ] Dev server runs (\`bun dev\`)
 - [ ] Lint and production build pass
+- [ ] \`README.md\` updated with Nuxt v${TARGET_VERSION}
 EOF
   echo "$body_file"
 }
@@ -192,6 +193,29 @@ Fix one of the following, then re-run the workflow:
   2. Add a repository secret PAT_TOKEN (classic PAT with `repo`, or fine-grained:
      Contents + Pull requests read/write). The workflow already uses it for git/gh.
 EOF
+}
+
+update_readme_version() {
+  local version="$1"
+  if [ ! -f "README.md" ]; then
+    return 0
+  fi
+  echo "📝 Updating Nuxt version to v${version} in README.md..."
+  local runner="bun"
+  if ! command -v bun >/dev/null 2>&1; then
+    runner="node"
+  fi
+  TARGET_VER="$version" "$runner" -e '
+    const fs = require("fs");
+    const target = process.env.TARGET_VER;
+    if (!target) {
+      process.exit(1);
+    }
+    let content = fs.readFileSync("README.md", "utf8");
+    content = content.replace(/(\*\*Nuxt (?:v)?)[0-9]+(?:\.[0-9]+)*/gi, `$1${target}`);
+    content = content.replace(/(built with (?:the )?Nuxt (?:v)?)[0-9]+(?:\.[0-9]+)*/gi, `$1${target}`);
+    fs.writeFileSync("README.md", content, "utf8");
+  '
 }
 
 apply_bump_and_push() {
@@ -219,12 +243,14 @@ apply_bump_and_push() {
     TARGET_VERSION="$RESOLVED_VERSION"
   fi
 
-  if git diff --quiet package.json bun.lock; then
-    echo "⚠️ No changes in package.json or bun.lock after update."
+  update_readme_version "$TARGET_VERSION"
+
+  if git diff --quiet package.json bun.lock README.md; then
+    echo "⚠️ No changes in package.json, bun.lock, or README.md after update."
     return 1
   fi
 
-  git add package.json bun.lock
+  git add package.json bun.lock README.md
   HUSKY=0 git commit -m "chore(deps): bump nuxt to v${TARGET_VERSION}"
   echo "📤 Pushing '${BRANCH_NAME}' (force-with-lease after rebase onto ${DEFAULT_BRANCH})..."
   git push --force-with-lease origin "HEAD:${BRANCH_NAME}"
