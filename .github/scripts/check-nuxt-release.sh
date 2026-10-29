@@ -203,8 +203,8 @@ apply_bump_and_push() {
     echo "📥 Pinning Nuxt to ^${FORCE_VERSION} (manual force_version)..."
     bun add "nuxt@^${FORCE_VERSION}"
   else
-    echo "📥 Running nuxt upgrade (channel v4, dedupe)..."
-    bunx nuxt upgrade . --channel v4 --dedupe
+    echo "📥 Pinning Nuxt to ^${TARGET_VERSION} (latest from npm)..."
+    bun add "nuxt@^${TARGET_VERSION}"
   fi
 
   RESOLVED_VERSION=$(read_nuxt_version_from_json "$(cat package.json)")
