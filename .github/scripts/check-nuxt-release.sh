@@ -158,14 +158,16 @@ This PR tracks the latest **nuxt** release on npm. It is updated in place on \`$
 
 \`\`\`bash
 git fetch origin
-git checkout ${BRANCH_NAME}
+git switch ${BRANCH_NAME}
 git pull origin ${BRANCH_NAME}
 bun install
 bun dev
 bun lint:fix
 bun run build
-# Or upgrade locally the same way CI does:
-bunx nuxt upgrade . --channel v4 --dedupe
+# Upgrade locally (interactive — choose "dedupe lockfile" when prompted):
+bun x nuxt upgrade
+# Or non-interactively, the same way CI does it (--dedupe = recommended option):
+bun x nuxt upgrade --dedupe
 \`\`\`
 
 ---
@@ -200,11 +202,16 @@ apply_bump_and_push() {
   bun install
 
   if [ -n "$FORCE_VERSION" ]; then
+    # Direct install to a specific version — matches `bun add nuxt@^X.Y.Z` from the
+    # Nuxt 4 upgrade guide (https://nuxt.com/docs/4.x/getting-started/upgrade).
     echo "📥 Pinning Nuxt to ^${FORCE_VERSION} (manual force_version)..."
     bun add "nuxt@^${FORCE_VERSION}"
   else
-    echo "📥 Pinning Nuxt to ^${TARGET_VERSION} (latest from npm)..."
-    bun add "nuxt@^${TARGET_VERSION}"
+    # Official upgrade path: `bunx nuxt upgrade` per the Nuxt upgrade guide.
+    # --dedupe  → select "dedupe lockfile" (the recommended non-interactive choice).
+    # --channel → explicit stable channel (avoids accidental nightly installs).
+    echo "📥 Upgrading Nuxt via 'bun x nuxt upgrade --dedupe --channel=stable' (official channel)..."
+    bun x nuxt upgrade --dedupe --channel=stable
   fi
 
   RESOLVED_VERSION=$(read_nuxt_version_from_json "$(cat package.json)")
