@@ -225,6 +225,9 @@ export default defineNuxtConfig({
   },
 
   nitro: {
+    externals: {
+      inline: ["vue"],
+    },
     devStorage: {
       cache: {
         driver: "memory",
