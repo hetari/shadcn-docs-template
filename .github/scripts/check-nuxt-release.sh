@@ -150,7 +150,7 @@ This PR tracks the latest **nuxt** release on npm. It is updated in place on \`$
 
 **Current target:** [v${TARGET_VERSION}](https://www.npmjs.com/package/nuxt/v/${TARGET_VERSION}) ([release notes](${RELEASE_URL}))
 
-`\${DEFAULT_BRANCH}\` still has \`^\${MAIN_VERSION}\`; this branch runs [\`nuxt upgrade\`](https://nuxt.com/docs/4.x/api/commands/upgrade) (v4 channel), updates \`README.md\`, and refreshes \`bun.lock\`.
+\`\${DEFAULT_BRANCH}\` still has \`^\${MAIN_VERSION}\`; this branch runs [\`nuxt upgrade\`](https://nuxt.com/docs/4.x/api/commands/upgrade) (v4 channel), updates \`README.md\`, and refreshes \`bun.lock\`.
 
 ---
 
@@ -266,8 +266,8 @@ sync_pr_metadata() {
       --title "chore(deps): bump Nuxt to v${TARGET_VERSION}" \
       --body-file "$pr_body_file"
   else
-    CLOSED_PR_NUMBER=$(gh pr list --state closed --head "${BRANCH_NAME}" --json number \
-      --jq 'sort_by(.number) | last | .number // empty' 2>/dev/null || true)
+    CLOSED_PR_NUMBER=$(gh pr list --state closed --head "${BRANCH_NAME}" --json number,mergedAt \
+      --jq 'map(select(.mergedAt == null)) | sort_by(.number) | last | .number // empty' 2>/dev/null || true)
     if [ -n "$CLOSED_PR_NUMBER" ]; then
       echo "♻️ Reopening closed PR #${CLOSED_PR_NUMBER} on '${BRANCH_NAME}'..."
       if ! gh pr reopen "${CLOSED_PR_NUMBER}"; then
