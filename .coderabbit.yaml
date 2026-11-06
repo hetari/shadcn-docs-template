@@ -42,7 +42,10 @@ reviews:
   auto_assign_reviewers: true
   disable_cache: true
   auto_review:
+    enabled: true
+    auto_incremental_review: true
     drafts: true
+    auto_pause_after_reviewed_commits: 0
   request_changes_workflow: true
 
 issue_enrichment:
