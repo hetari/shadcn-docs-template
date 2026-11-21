@@ -33,8 +33,7 @@ const Component = loader ? defineAsyncComponent(loader as any) : null;
     <code class="relative rounded-sm bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">
       {{ name }}
     </code>
-    not found in <code class="font-mono text-xs">components/demo</code> or
-    <code class="font-mono text-xs">components/ui</code>.
+    not found.
   </p>
 
   <ComponentPreviewTabs v-else :class="props.class" :align :hide-code :component="Component">

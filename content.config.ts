@@ -5,8 +5,8 @@ export default defineContentConfig({
     content: defineCollection({
       type: "page",
       source: {
-        include: "**/*.md",
-        exclude: ["**/.*"],
+        include: "**/*.{md,yml}",
+        exclude: ["**/.!(navigation.yml)"],
       },
       schema: z.object({
         rawbody: z.string().optional(),

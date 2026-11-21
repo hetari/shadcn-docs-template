@@ -3,13 +3,11 @@ import { siteConfig } from "~/lib/siteConfig";
 </script>
 
 <template>
-  <footer
-    class="dark:bg-transparent 3xl:fixed:bg-transparent"
-  >
+  <footer class="dark:bg-transparent 3xl:fixed:bg-transparent">
     <div class="container-wrapper px-4 xl:px-6">
       <div class="flex h-(--footer-height) items-center justify-between">
         <div class="w-full text-center text-xs/loose text-muted-foreground sm:text-sm">
-          <span>
+          <p>
             &copy; {{ new Date().getFullYear() }} - Built with
             <a
               href="https://shadcn-vue.com"
@@ -24,7 +22,16 @@ import { siteConfig } from "~/lib/siteConfig";
               rel="noopener noreferrer"
               class="underline underline-offset-4"
             >GitHub</a>.
-          </span>
+          </p>
+          <p>
+            For the docs template use
+            <a
+              href="https://github.com/hetari/shadcn-docs-template"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="underline underline-offset-4"
+            >shadcn-docs-template</a>
+          </p>
         </div>
       </div>
     </div>

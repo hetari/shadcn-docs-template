@@ -3,8 +3,9 @@ import type { HTMLAttributes } from "vue";
 import { cn } from "cn";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import type { NavigationItem } from "@/lib/navigation";
-import { SIDEBAR_EXCLUDED_PAGES } from "@/lib/navigation";
+
+import type { NavigationItem } from "~/lib/navigation";
+import { SIDEBAR_EXCLUDED_PAGES } from "~/lib/navigation";
 
 const props = defineProps<{
   class?: HTMLAttributes["class"];
@@ -72,7 +73,7 @@ function isChildVisible(child: NavigationItem): boolean {
       align="start"
       side="bottom"
       :align-offset="-16"
-      :side-offset="14"
+      :side-offset="12"
     >
       <div class="flex flex-col gap-12 overflow-auto p-6">
         <div class="flex flex-col gap-4">
@@ -121,14 +122,8 @@ function isChildVisible(child: NavigationItem): boolean {
                 class="size-6 shrink-0"
               />
               {{ item.title }}
-              <span
-                v-if="item.new"
-                class="size-2 rounded-full border-0 bg-green-500"
-              />
-              <span
-                v-else-if="item.beta"
-                class="size-2 rounded-full border-0 bg-orange-500"
-              />
+              <span v-if="item.new" class="size-2 rounded-full border-0 bg-green-500" />
+              <span v-else-if="item.beta" class="size-2 rounded-full border-0 bg-orange-500" />
               <Badge
                 v-if="item.soon"
                 variant="secondary"
@@ -147,6 +142,11 @@ function isChildVisible(child: NavigationItem): boolean {
           <template v-for="group in folderGroups" :key="group.title">
             <div class="flex flex-col gap-4">
               <div class="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <LucideIcon
+                  v-if="group.navigation?.icon"
+                  :name="group.navigation.icon"
+                  class="size-4 shrink-0"
+                />
                 {{ group.title }}
                 <Badge
                   v-if="group.soon"
@@ -171,14 +171,8 @@ function isChildVisible(child: NavigationItem): boolean {
                     class="size-6 shrink-0"
                   />
                   {{ item.title }}
-                  <span
-                    v-if="item.new"
-                    class="size-2 rounded-full border-0 bg-green-500"
-                  />
-                  <span
-                    v-else-if="item.beta"
-                    class="size-2 rounded-full border-0 bg-orange-500"
-                  />
+                  <span v-if="item.new" class="size-2 rounded-full border-0 bg-green-500" />
+                  <span v-else-if="item.beta" class="size-2 rounded-full border-0 bg-orange-500" />
                   <Badge
                     v-if="item.soon"
                     variant="secondary"

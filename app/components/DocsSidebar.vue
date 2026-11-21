@@ -8,7 +8,9 @@ const props = defineProps<{
 
 const { path } = toRefs(useRoute());
 
-const { sectionsLabel, rootPages, folderGroups } = useSidebarSections(() => props.tree);
+const { sectionsLabel, rootPages, folderGroups } = useSidebarSections(
+  () => props.tree,
+);
 
 function isChildVisible(child: NavigationItem): boolean {
   return !child.hide && !SIDEBAR_EXCLUDED_PAGES.includes(child.path);
@@ -42,7 +44,9 @@ function isChildVisible(child: NavigationItem): boolean {
                 "
               >
                 <NuxtLink :to="item.path" prefetch-on="interaction">
-                  <span class="absolute inset-0 flex w-(--sidebar-width) bg-transparent" />
+                  <span
+                    class="absolute inset-0 flex w-(--sidebar-width) bg-transparent"
+                  />
                   <LucideIcon
                     v-if="item.navigation?.icon"
                     :name="item.navigation.icon"
@@ -73,7 +77,14 @@ function isChildVisible(child: NavigationItem): boolean {
 
       <!-- Folder Groups -->
       <SidebarGroup v-for="group in folderGroups" :key="group.title">
-        <SidebarGroupLabel class="flex items-center gap-2 font-medium text-muted-foreground">
+        <SidebarGroupLabel
+          class="flex items-center gap-2 font-medium text-muted-foreground"
+        >
+          <LucideIcon
+            v-if="group.navigation?.icon"
+            :name="group.navigation.icon"
+            class="me-2 size-4 shrink-0"
+          />
           {{ group.title }}
           <Badge
             v-if="group.soon"
@@ -99,7 +110,9 @@ function isChildVisible(child: NavigationItem): boolean {
                   "
                 >
                   <NuxtLink :to="childItem?.path" prefetch-on="interaction">
-                    <span class="absolute inset-0 flex w-(--sidebar-width) bg-transparent" />
+                    <span
+                      class="absolute inset-0 flex w-(--sidebar-width) bg-transparent"
+                    />
                     <LucideIcon
                       v-if="childItem.navigation?.icon"
                       :name="childItem.navigation.icon"
