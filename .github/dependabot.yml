@@ -1,10 +1,4 @@
 # Dependabot: grouped GitHub Actions updates (one PR per week).
-#
-# Nuxt is handled by .github/workflows/check-nuxt-release.yml. Bun was removed
-# from Dependabot here because multi-ecosystem version updates only run on the
-# group schedule; the green dependabot.yml check is config validation, not a
-# version run. The watcher opens or refreshes a Nuxt PR when npm has a newer
-# release (e.g. 4.6.2 while lockfile is on 4.6.1).
 
 version: 2
 
