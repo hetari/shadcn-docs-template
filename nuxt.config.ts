@@ -120,8 +120,6 @@ export default defineNuxtConfig({
     optimizeDeps: {
       include: [
         "@lucide/vue",
-        "@vue/devtools-core",
-        "@vue/devtools-kit",
         "class-variance-authority",
         "clsx",
         "cn",

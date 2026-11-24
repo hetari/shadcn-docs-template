@@ -2,7 +2,7 @@
 
 ### Enjoying my project? Please show your appreciation by starring it on GitHub! ⭐
 
-A production-ready documentation template built with **Nuxt 4.6.4** and **shadcn-vue**. Engineered for speed, clarity, and developer sanity.
+A production-ready documentation template built with **Nuxt 4.7** and **shadcn-vue**. Engineered for speed, clarity, and developer sanity.
 
 <img src="https://raw.githubusercontent.com/hetari/shadcn-docs-template/main/white.png" width="100%" />
 <br />
@@ -13,22 +13,26 @@ For more information, please visit the [Documentation](https://shadcn-docs-templ
 
 ## ✨ Features
 
-- **Nuxt 4.6.4 & Nuxt Content 3**: The latest and greatest from the Nuxt ecosystem.
-- **Shadcn Vue Integration**: Beautifully designed components ready to use.
-- **Tailwind CSS 4**: Modern styling with the latest Tailwind features.
+- **Nuxt 4.7 & Nuxt Content 3**: Modern, file-based content management with full SSR, SSG, and ISR support.
+- **Shadcn Vue & Reka UI**: Accessible, customizable components styled with Tailwind CSS v4.
+- **Tailwind CSS 4**: Next-generation CSS engine with high performance and zero-config CSS variables.
 - **MDC Components**: Rich Markdown support with custom components like `Callout`, `ComponentPreview`, and more.
-- **Dark Mode**: Built-in support for light and dark themes via `@nuxtjs/color-mode`.
-- **Search**: Integrated search api functionality.
-- **Optimized for Performance**: Fast loading and great SEO out of the box.
+- **Dark Mode**: Seamless light and dark mode powered by `@nuxtjs/color-mode`.
+- **Integrated Search**: Fast, client & server-side documentation search.
+- **Dynamic OG Images**: Automated social sharing cards via `nuxt-og-image` and Satori.
+- **Syntax Highlighting**: Beautiful code blocks powered by Shiki.
+- **Performance & SEO**: Built-in font and image optimization with `@nuxt/fonts` and `@nuxt/image`.
 
 ## 🛠️ Tech Stack
 
-- [Nuxt](https://nuxt.com)
+- [Nuxt 4](https://nuxt.com)
 - [Vue 3](https://vuejs.org)
-- [Tailwind CSS 4](https://tailwindcss.com)
-- [Shadcn Vue](https://www.shadcn-vue.com)
-- [Nuxt Content](https://content.nuxt.com)
-- [Lucide Vue Next](https://lucide.dev)
+- [Nuxt Content v3](https://content.nuxt.com)
+- [Tailwind CSS v4](https://tailwindcss.com)
+- [Shadcn Vue](https://www.shadcn-vue.com) / [Reka UI](https://reka-ui.com)
+- [Lucide Vue](https://lucide.dev)
+- [Shiki](https://shiki.style)
+- [GSAP](https://gsap.com)
 
 ## 🚀 Getting Started
 
@@ -37,20 +41,13 @@ For more information, please visit the [Documentation](https://shadcn-docs-templ
 1. Clone the repository:
    ```bash
    git clone https://github.com/hetari/shadcn-docs-template.git
+   cd shadcn-docs-template
    ```
 
 2. Install dependencies:
    ```bash
    bun install
    ```
-
-### Upgrade
-To upgrade to the latest version, run:
-
-```bash
-bunx --bun nuxt@latest upgrade
-bun update # this will update all dependencies to their latest versions, including Nuxt and its related packages, not recommended if you want to keep the current versions of some packages, but it will ensure that all packages are updated to their latest versions, including Nuxt and its related packages.
-```
 
 ### Development
 
@@ -61,3 +58,25 @@ bun dev
 ```
 
 The site will be available at `http://localhost:3000`.
+
+### Building & Preview
+
+```bash
+# Build for production
+bun run build
+
+# Preview production build
+bun run preview
+```
+
+### Upgrade
+
+To upgrade Nuxt to the latest version:
+```bash
+bunx --bun nuxt@latest upgrade
+```
+
+To update all project dependencies:
+```bash
+bun update
+```
