@@ -1,5 +1,5 @@
 import { defineEventHandler, useRuntimeConfig } from "nuxt/server";
-import { getDocsVersion } from "../utils/docs-version";
+import { getDocsVersion } from "#server/utils/docs-version";
 
 export default defineEventHandler((event) => {
   const config = useRuntimeConfig();

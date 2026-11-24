@@ -23,6 +23,12 @@ const props = withDefaults(
 const { value } = toRefs(props);
 
 const { copy, copied } = useClipboard({ source: value });
+const announcer = useAnnouncer();
+
+function handleCopy() {
+  copy();
+  announcer.polite("Copied to clipboard");
+}
 </script>
 
 <template>
@@ -40,7 +46,7 @@ const { copy, copied } = useClipboard({ source: value });
             )
           "
           v-bind="$attrs"
-          @click="copy()"
+          @click="handleCopy"
         >
           <span class="sr-only">Copy</span>
           <Check v-if="copied" /><Copy v-else />

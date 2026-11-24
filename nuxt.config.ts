@@ -2,6 +2,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { createHash } from "node:crypto";
 import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { z } from "zod";
 
 // Compute the docs version at BUILD TIME by hashing all .md files.
 // This avoids reading the filesystem at request time, which fails in serverless.
@@ -55,7 +56,7 @@ export default defineNuxtConfig({
   ],
 
   runtimeConfig: {
-    docsVersion: DOCS_VERSION,
+    docsVersion: z.string().default(DOCS_VERSION),
   },
 
   eslint: {
@@ -247,15 +248,34 @@ export default defineNuxtConfig({
       },
     },
     prerender: {
-      crawlLinks: true,
-      routes: ["/"],
       failOnError: false,
       autoSubfolderIndex: false,
     },
   },
 
+  prerender: {
+    crawlLinks: true,
+    routes: ["/"],
+  },
+
   experimental: {
     routeTypedFetch: true,
+    strictRouteTypes: true,
+    staticRoutes: true,
+    ssrErrorBoundary: true,
+    early404: true,
+    prerenderErrorPages: true,
+    navigateToEarlyReturn: true,
+    extractSerializablePageMeta: true,
+    inlineErrorRendering: true,
+    payloadExtraction: "client",
+    ssrStreaming: true,
+    prefetchPreloadTags: true,
+    defaults: {
+      navigateTo: {
+        noopener: true,
+      },
+    },
   },
   app: {
     head: {

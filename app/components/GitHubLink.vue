@@ -11,12 +11,20 @@ const cached = useLocalStorage<{ count: number; timestamp: number } | null>(
   null,
 );
 
+const isCacheFresh = computed(() => {
+  return (
+    import.meta.client
+      && Boolean(cached.value && Date.now() - cached.value.timestamp < CACHE_TTL_MS)
+  );
+});
+
 const { data, error } = useFetch<{
   stargazers_count: number;
 }>(siteConfig.links.githubAPI, {
   key: "github-stargazers",
   lazy: true,
   server: false,
+  enabled: computed(() => Boolean(siteConfig.links.githubAPI) && !isCacheFresh.value),
   getCachedData(key, nuxtApp) {
     const mem = nuxtApp.payload.data[key] ?? nuxtApp.static.data[key];
     if (mem) {
@@ -62,6 +70,7 @@ const stars = computed<string | null>(() => {
       :to="siteConfig.links.github"
       rel="noreferrer"
       target="_blank"
+      external
       prefetch-on="interaction"
     >
       <span class="sr-only">GitHub</span>

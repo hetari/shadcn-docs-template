@@ -4,7 +4,7 @@ import { siteConfig } from "~/lib/siteConfig";
 
 <template>
   <Button as-child class="h-8 shadow-none" size="sm" variant="ghost">
-    <NuxtLink :to="siteConfig.links.x" rel="noreferrer" target="_blank" prefetch-on="interaction">
+    <NuxtLink :to="siteConfig.links.x" rel="noreferrer" target="_blank" external prefetch-on="interaction">
       <svg
         viewBox="0 0 24 24"
         width="24px"

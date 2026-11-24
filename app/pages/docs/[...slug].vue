@@ -17,7 +17,7 @@ const { data: page } = await useAsyncData(route.path, async () => {
 });
 
 if (!page.value) {
-  throw createError({ statusCode: 404, statusMessage: "Page not found" });
+  throw createError({ status: 404, statusText: "Page not found" });
 }
 
 const { data: neighbours } = await useAsyncData(
@@ -119,6 +119,7 @@ defineOgImage("Custom", {
                   :to="page.links.doc"
                   target="_blank"
                   rel="noreferrer"
+                  external
                   prefetch-on="interaction"
                 >
                   Docs <ArrowUpRight />
@@ -129,6 +130,7 @@ defineOgImage("Custom", {
                   :to="page.links.api"
                   target="_blank"
                   rel="noreferrer"
+                  external
                   prefetch-on="interaction"
                 >
                   API Reference <ArrowUpRight />
@@ -137,10 +139,25 @@ defineOgImage("Custom", {
             </div>
           </div>
 
-          <ContentRenderer
-            :value="page.source"
-            class="w-full flex-1 *:data-[slot=alert]:first:mt-0"
-          />
+          <NuxtErrorBoundary>
+            <ContentRenderer
+              :value="page.source"
+              class="w-full flex-1 *:data-[slot=alert]:first:mt-0"
+            />
+            <template #error="{ error, clearBoundaryError }">
+              <div class="my-4 rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive">
+                <p class="font-semibold">
+                  Failed to render documentation content
+                </p>
+                <p class="text-sm opacity-80">
+                  {{ error?.message || 'An unexpected error occurred.' }}
+                </p>
+                <Button variant="outline" size="sm" class="mt-2" @click="clearBoundaryError">
+                  Retry
+                </Button>
+              </div>
+            </template>
+          </NuxtErrorBoundary>
 
           <p
             v-if="page.lastUpdated"

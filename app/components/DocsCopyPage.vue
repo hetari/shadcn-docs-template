@@ -122,6 +122,12 @@ const menuItems = {
 };
 
 const { copy, copied } = useClipboard();
+const announcer = useAnnouncer();
+
+function handleCopyPage(text: string) {
+  copy(text);
+  announcer.polite("Page markdown copied to clipboard");
+}
 </script>
 
 <template>
@@ -134,7 +140,7 @@ const { copy, copied } = useClipboard();
         variant="secondary"
         size="sm"
         class="h-8 shadow-none focus-visible:relative focus-visible:z-10 md:h-7 md:text-[0.8rem]"
-        @click="copy(rawbody)"
+        @click="handleCopyPage(rawbody)"
       >
         <Check v-if="copied" /> <Copy v-else />
         Copy Page

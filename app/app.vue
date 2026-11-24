@@ -10,6 +10,8 @@ const colorMode = useColorMode();
 </script>
 
 <template>
+  <NuxtAnnouncer />
+  <NuxtRouteAnnouncer />
   <SiteBody>
     <ConfigProvider>
       <TooltipProvider>
